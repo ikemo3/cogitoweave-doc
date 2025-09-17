@@ -108,11 +108,11 @@ Martin Fowler が「用語を作って概念を明確化し、それを広める
 
 ### ビジョン: 全ての考える人が小さな思想家になれる世界
 
-<!-- FOUNDATION_BEGIN: product-vision -->
+<!-- GLOBAL_CONCLUSION_BEGIN: product-vision -->
 
-「全ての考える人（小さな思想家）が自分の考えを体系化し、自らの問題解決に役立てるための仕組みを作る」
+「全ての考える人(小さな思想家)が自分の考えを体系化し、自らの問題解決に役立てるための仕組みを作る」
 
-<!-- FOUNDATION_END: product-vision -->
+<!-- GLOBAL_CONCLUSION_END: product-vision -->
 
 これは、特別な才能や専門知識を持つ人だけでなく、日常的に「考える」ことを大切にする全ての人が、自分なりの思考体系を育て、実際の問題解決に活用できる環境の実現を意味する。
 

@@ -2,55 +2,80 @@
 doc_type: "pattern-logic"
 status: "draft"
 depends:
-  contracts: []
-  produces: []
+  contracts:
+    - "budget-time-constraints"
+    - "existing-resource-constraints"
+    - "development-constraints"
+    - "market-constraints"
+  produces:
+    - "data-migration-policy"
+    - "platform-compatibility"
+    - "export-functionality"
 ---
 
 # 互換性 (Compatibility)
 
 ## 前提
 
-- [品質属性とトレードオフ](README.md)で定義された品質特性の分析
-- システムの他システムとの共存・連携に関する要件の評価
+<!-- PREMISE_BEGIN: budget-time-constraints -->
+
+限られた予算(月 1000 円)と時間(週 7 時間)に適応した効率的な開発手法を選択する。
+
+<!-- PREMISE_END: budget-time-constraints -->
+
+<!-- PREMISE_BEGIN: existing-resource-constraints -->
+
+自宅サーバー(Ubuntu)と Cloudflare サービスの最大限活用により追加コストを最小化する。
+
+<!-- PREMISE_END: existing-resource-constraints -->
+
+<!-- PREMISE_BEGIN: development-constraints -->
+
+- シンプルで理解しやすい構造、一人で管理可能な複雑度に制限する。
+
+<!-- PREMISE_END: development-constraints -->
+
+<!-- PREMISE_BEGIN: market-constraints -->
+
+### 既存ツール代替可能性制約
+
+- 既存ツールでは実現困難な独自価値の提供が必須である。
+
+### 個人開発の市場環境制約
+
+- 他者からの評価や社会的な標準に合わせる必要がない。
+<!-- PREMISE_END: market-constraints -->
 
 ## 論理
 
-互換性とは、同じハードウェア環境またはソフトウェア環境を共有しながら、他のソフトウェア製品と情報を交換し、必要な機能を実行できるソフトウェア製品の度合いを表す。
+### Q1: 他のナレッジツールからのデータ移行について
 
-### 期待する性質
+データ移行機能は提供しない。開発・保守体制制約により一人で管理可能な複雑度に制限する必要があり、データ移行機能の実装・テスト・保守は複雑度を大幅に増加させるため除外する。また予算・時間制約活用により週 7 時間の制約下でコア機能開発に集中する必要があり、移行機能ではなく独自価値の実現にリソースを集中させる。
 
-- 共存性: 他の製品と共通の環境及び資源を共有しながら、悪影響を与えることなく、必要な機能を効率的に実行できる度合い
-- 相互運用性: 2つ以上のシステム、製品又は構成要素が情報を交換し、その情報を使用できる度合い
+### Q2: プラットフォーム互換性について
 
-### 優先度
+Web 配信のみを前提とする。既存リソース制約により自宅サーバー・Cloudflare で最適化された Web 配信インフラを活用し、追加コストを最小化する必要がある。開発・保守体制制約により複数プラットフォーム対応は保守負荷を指数的に増加させ、一人での管理可能性を超えるため除外する。
 
-- 高（High）。Mac Chromeでの全機能、iPhone Safariでの基本機能動作が Why 系の外部制約。
-- Web Baseline Newly available を採用基準とし、Progressive Enhancement を徹底。
+### Q3: エクスポート機能について
 
-### トレードオフ相手
-
-- 性能: Polyfill/フォールバックはサイズ増加・実行コストを招く。
-- 機能適合性: 新API活用を抑えると表現力が落ちる場合がある。
-- 保守性: 互換レイヤーの維持は変更コストを上げる。
-
-### 論理的影響
-
-- 機能検出（Feature Detection）で分岐。UA 判定は採用しない。
-- ES Modules/CSS カスタムプロパティ等の標準機能を優先し、ベンダ固有APIは回避。
-- 入力系は標準フォーム＋アクセシビリティ属性。ジェスチャ依存の操作にはキーボード代替を用意。
-- サーバAPIはHTTP/JSONのRESTを維持し、CORSは自ドメインに限定。
-
-### 判断
-
-- 対応: macOS Chrome 最新（フル）/ iOS Safari 最新（閲覧・基本操作）。
-- 初期は Service Worker 不採用（互換テスト負荷削減）。将来の閲覧最適化で検討。
-- 非対応機能はフォールバック（CSS視覚効果の簡素化など）。
-
-### 備考
-
-- 互換性はE2Eスモークで主要経路（URL入力→要約→保存→表示）を検証。
-- 既知の制約はリリースノートに明記し透明化。
+バックアップ用途と LLM に渡すための Markdown 出力機能は提供する。既存ツール代替可能性制約により独自価値の提供が必須であり、バックアップ機能は既存ツールでは提供されない価値となる。また個人開発の市場環境制約により他者との共有ではなく個人の思考支援に特化でき、蓄積した知識を LLM に効率的に渡す Markdown 形式は独自の使用体験を実現する。
 
 ## 結論
 
-標準機能を基盤に Progressive Enhancement で適合性を確保する。対象ブラウザを限定しつつ基本操作の連続性を優先する。
+<!-- GLOBAL_CONCLUSION_BEGIN: data-migration-policy -->
+
+他のナレッジツールからのデータ移行機能は提供しない。開発・保守の複雑度制限とコア機能への開発リソース集中を優先する。
+
+<!-- GLOBAL_CONCLUSION_END: data-migration-policy -->
+
+<!-- GLOBAL_CONCLUSION_BEGIN: platform-compatibility -->
+
+プラットフォーム互換性は Web 配信のみを前提とする。既存インフラの活用とコスト最小化を優先し、複数プラットフォーム対応による保守負荷増大を避ける。
+
+<!-- GLOBAL_CONCLUSION_END: platform-compatibility -->
+
+<!-- GLOBAL_CONCLUSION_BEGIN: export-functionality -->
+
+エクスポート機能はバックアップ用途と LLM に渡すための Markdown 出力のみ提供する。個人の思考支援に特化した独自価値の実現を優先する。
+
+<!-- GLOBAL_CONCLUSION_END: export-functionality -->

@@ -4,7 +4,8 @@ status: "draft"
 depends:
   contracts: []
   produces:
-    - "economic-constraints"
+    - "budget-time-constraints"
+    - "existing-resource-constraints"
 ---
 
 # リソース管理
@@ -19,11 +20,11 @@ CogitoWeave の具体的な経済制約について、実際の制約要素と�
 
 ### 予算・時間制約
 
-月額予算上限は 1000 円以内（ドメイン代・既存契約サービス・電気代除く）、開発時間は週 7 時間程度である。
+月額予算上限は 1000 円以内(ドメイン代・既存契約サービス・電気代除く)、開発時間は週 7 時間程度である。
 
 ### 既存利用可能リソース
 
-自宅サーバー（Intel N100 ミニ PC）、Cloudflare サービス（Tunnel, Access）、既存ドメインが利用可能である。
+自宅サーバー(Intel N100 ミニ PC, Ubuntu)、Cloudflare サービス(Tunnel, Access)、既存ドメインが利用可能である。
 
 ## 論理
 
@@ -31,28 +32,32 @@ CogitoWeave の具体的な経済制約について、実際の制約要素と�
 
 ### 予算・時間制約による設計制約
 
-- 限られた予算（月 1000 円）と時間（週 7 時間）に適応した効率的な開発手法を選択する。
-  - この制約下では学習コストの高い新技術導入や高コストなサービス利用が困難であるため。
+- 限られた予算(月 1000 円)と時間(週 7 時間)に適応した効率的な開発手法を選択する。
+  - この制約下では習得に時間のかかる新技術の導入や高コストなサービス利用が困難であるため。
 
 ### 既存利用可能リソースによる制約軽減
 
-- 自宅サーバーと Cloudflare サービスの最大限活用により追加コストを最小化する。
+- 自宅サーバー(Ubuntu)と Cloudflare サービスの最大限活用により追加コストを最小化する。
   - 既存リソースを有効活用することで新規導入コストを回避できるため。
 
 ## 結論
 
 CogitoWeave の経済制約として、以下の設計判断を行う:
 
-<!-- FOUNDATION_BEGIN: economic-constraints -->
-
 ### 予算・時間制約活用
 
-- 限られた予算（月 1000 円）と時間（週 7 時間）に適応した効率的な開発手法を選択する。
+<!-- GLOBAL_CONCLUSION_BEGIN: budget-time-constraints -->
+
+限られた予算(月 1000 円)と時間(週 7 時間)に適応した効率的な開発手法を選択する。
+
+<!-- GLOBAL_CONCLUSION_END: budget-time-constraints -->
 
 ### 既存リソース制約
 
-- 自宅サーバーと Cloudflare サービスの最大限活用により追加コストを最小化する。
+<!-- GLOBAL_CONCLUSION_BEGIN: existing-resource-constraints -->
 
-<!-- FOUNDATION_END: economic-constraints -->
+自宅サーバー(Ubuntu)と Cloudflare サービスの最大限活用により追加コストを最小化する。
+
+<!-- GLOBAL_CONCLUSION_END: existing-resource-constraints -->
 
 これらの経済制約を逆手に取った設計判断により、限られたリソースで実用的なシステム実現を目指す。

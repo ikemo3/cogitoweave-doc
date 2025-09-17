@@ -54,13 +54,13 @@ Scenario-based Design の手法でユーザー体験から必要 UI 要素を導
 
 シナリオ 3 の体験フロー分析により、以下の 4 つの UI 要素が必要であることが特定される：
 
-<!-- FOUNDATION_BEGIN: scenario-03-ui-elements -->
+<!-- GLOBAL_CONCLUSION_BEGIN: scenario-03-ui-elements -->
 
 1. **起点概念選択機能** - 探索の出発点となる概念の選択機能
 2. **関連概念入力支援機能** - オートコンプリート等による効率的な関連概念入力
 3. **関係定義・意味付け機能** - 個人的な関係語彙による直感的な関係表現と意味付け
 4. **関係性ネットワーク記録機能** - 発見した関係性の記録・保存による蓄積的知識構築
 
-<!-- FOUNDATION_END: scenario-03-ui-elements -->
+<!-- GLOBAL_CONCLUSION_END: scenario-03-ui-elements -->
 
 これらの UI 要素により、従来の「洞察の散逸」から「思考パターンの体系化」への体験変革が実現される。
