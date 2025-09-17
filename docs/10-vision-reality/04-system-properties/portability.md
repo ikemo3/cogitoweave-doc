@@ -6,6 +6,7 @@ depends:
   produces:
     - "target-platforms"
     - "browser-support"
+    - "platform-constraints"
 ---
 
 # 移植性制約における段階的絞り込み
@@ -32,7 +33,7 @@ CogitoWeave のプラットフォーム制約は、作成者の実際のデバ�
 
 まず、作成者の基本的な使用要求として、iPhone・Mac での利用が前提となる。個人のデジタルツェッテルカステンは、思考の外在化と情報管理を目的とするため、普段使用しているデバイスでの利用が必須である。iPhone での移動中の情報アクセスと、Mac での本格的な作業環境での利用により、知識管理の継続性を確保する必要がある。
 
-ただし、実際の利用パターンを考慮すると、情報の更新作業（文献メモ作成・概念間関係の入力・グラフ編集等）は大画面・物理キーボード・精密なポインティングデバイスがなければ効率的に行えない。一方、情報参照機能（閲覧・検索・ナビゲーション）は小画面でも十分に機能する。このため、更新機能はデスクトップ環境中心、参照機能はモバイル環境対応という機能分離が必要になる。
+ただし、実際の利用パターンを考慮すると、情報の更新作業(文献メモ作成・概念間関係の入力・グラフ編集等)は大画面・物理キーボード・精密なポインティングデバイスがなければ効率的に行えない。一方、情報参照機能(閲覧・検索・ナビゲーション)は小画面でも十分に機能する。このため、更新機能はデスクトップ環境中心、参照機能はモバイル環境対応という機能分離が必要になる。
 
 この異なるデバイス・OS での動作要求を効率的に実現するため、Web 技術による実装を選択する。ネイティブアプリ開発では iOS・macOS で別々の実装が必要になり、個人開発では現実的でない。Web 技術により単一のコードベースで両環境に対応し、開発効率と保守性を確保する。
 
@@ -42,7 +43,7 @@ CogitoWeave のプラットフォーム制約は、作成者の実際のデバ�
 
 CogitoWeave のブラウザ対応制約は、作成者の実際のデバイス環境と Web 技術による実装効率を基準として設定する必要がある。
 
-まず、作成者の確定デバイス環境として、iPhone（iOS Safari）と Mac（Chrome）での動作が必須となる。個人のデジタルツェッテルカステンは日常的に使用するツールであるため、実際に所有しているデバイスでの確実な動作が最優先である。この 2 つの環境での動作確保が基本要件となる。
+まず、作成者の確定デバイス環境として、iPhone(iOS Safari)と Mac(Chrome)での動作が必須となる。個人のデジタルツェッテルカステンは日常的に使用するツールであるため、実際に所有しているデバイスでの確実な動作が最優先である。この 2 つの環境での動作確保が基本要件となる。
 
 次に、Web 標準の採用基準として、Baseline Newly available を基準とする。Baseline Newly available は主要ブラウザすべてで対応が確認された最新の Web 標準を示すため、実装の信頼性と最新機能の活用を両立できる。Baseline Newly available で利用可能な機能のみを使用することで、確定デバイス以外でも基本的な動作互換性を期待できる。
 
@@ -52,7 +53,7 @@ CogitoWeave のブラウザ対応制約は、作成者の実際のデバイス�
 
 ステップ 1-2 の設計判断を統合した、CogitoWeave の最終的な移植性制約：
 
-<!-- FOUNDATION_BEGIN: target-platforms -->
+<!-- GLOBAL_CONCLUSION_BEGIN: target-platforms -->
 
 - 必須対応
   - 情報整理機能: Mac (Chrome) - デスクトップ環境中心
@@ -62,15 +63,15 @@ CogitoWeave のブラウザ対応制約は、作成者の実際のデバイス�
   - 作成者環境外での動作は妨げないが保証しない
   - Web 技術による実装のため、一般的なモダンブラウザで基本動作は期待できる
 - 除外対応
-  - ネイティブアプリ開発（iOS・macOS 別実装）
+  - ネイティブアプリ開発(iOS・macOS 別実装)
   - ローカルストレージのみによる単一デバイス運用
 
-<!-- FOUNDATION_END: target-platforms -->
+<!-- GLOBAL_CONCLUSION_END: target-platforms -->
 
-<!-- FOUNDATION_BEGIN: browser-support -->
+<!-- GLOBAL_CONCLUSION_BEGIN: browser-support -->
 
 - 必須対応
-  - 対応ブラウザ: iOS Safari（iPhone）、Chrome（Mac）
+  - 対応ブラウザ: iOS Safari(iPhone)、Chrome(Mac)
   - 採用 Web 標準: Baseline Newly available を基準とした機能のみ使用
   - 対応方針: 確定デバイスでの完全動作確保
 - 任意対応
@@ -79,7 +80,18 @@ CogitoWeave のブラウザ対応制約は、作成者の実際のデバイス�
   - Internet Explorer・古いブラウザとの互換性は考慮しない
   - Baseline Newly available 未対応の機能は使用しない
 
-<!-- FOUNDATION_END: browser-support -->
+<!-- GLOBAL_CONCLUSION_END: browser-support -->
+
+<!-- GLOBAL_CONCLUSION_BEGIN: platform-constraints -->
+
+1. **Mac 環境制約**: Chrome 上で情報整理機能が完全動作すること
+2. **iPhone 環境制約**: Safari 上で情報参照機能が基本動作すること
+3. **Web 標準採用基準**: Baseline Newly available を技術選択の判断基準とすること
+4. **マルチデバイス前提**: Web 技術による複数デバイス間データ共有を前提とすること
+
+これ以外の基本セキュリティ対策(HTTPS、SQLi/XSS 対策等)、現代 Web 標準性能要件、個人情報保護法等の法規制遵守、個人環境限定によるセキュリティリスク軽減は現代 Web 開発標準に準拠する。
+
+<!-- GLOBAL_CONCLUSION_END: platform-constraints -->
 
 ### 移植性の意図的制限
 

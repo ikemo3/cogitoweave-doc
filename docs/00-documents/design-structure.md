@@ -12,233 +12,100 @@ depends:
 
 設計書は構造化 4 軸設計フレームワーク(Why/What/Contract/How)に従って体系化されます。各設計判断は「1 ファイル 1 判断」原則に基づき細分化され、前提 → 論理 → 結論構造で整理されます。
 
-### Why/What/How の基本的役割と境界線
+### 4+1 ビュー・Why/What/How・C4 モデルの統合構造
+
+#### Why 系: 目的と背景の統合
+
+```mermaid
+graph TD
+    W1[コアビジョン]
+    W2[組織能力]
+    W3[外部環境]
+    W4[システム制約]
+    WS[Why 統合解]
+
+    W1 --> WS
+    W2 --> WS
+    W3 --> WS
+    W4 --> WS
+
+    classDef whyClass fill:#e1f5fe
+    class W1,W2,W3,W4,WS whyClass
+```
+
+#### What 系: 4+1 アーキテクチャビューと C4 階層化
+
+```mermaid
+graph LR
+    subgraph "抽象レベル: 4+1 アーキテクチャビュー"
+        S1[Scenario: ユースケース要求]
+        L1[Logical: 論理構造]
+        D1[Development: 開発構造]
+        P1[Process: プロセス構造]
+        PH1[Physical: 物理構造]
+    end
+
+    subgraph "具体レベル: C4 モデル"
+        C1[Context: システム境界]
+        C2[Container: 実行可能単位]
+        C3[Component: コンポーネント構成]
+        C4[Code: 実装レベル]
+        CD[Deployment: デプロイ構成]
+    end
+
+    %% 縦方向の整列
+    S1 --- C1
+    L1 --- C3
+    D1 --- C2
+    P1 --- C2
+    PH1 --- CD
+
+    %% C4内部の階層関係
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+    C2 --> CD
+```
+
+#### How 系: プロセスと手法の段階的構築
+
+```mermaid
+graph TD
+    H1[チーム運営]
+    H2[制約管理]
+    H3[リスク戦略]
+    H4[協働基盤]
+    H5[レビューとガバナンス]
+    H6[品質とデリバリ]
+    H7[計測と統合]
+
+    %% How 内部依存
+    H1 --> H2
+    H2 --> H3
+    H3 --> H4
+    H4 --> H5
+    H5 --> H6
+    H6 --> H7
+
+    classDef howClass fill:#fff3e0
+    class H1,H2,H3,H4,H5,H6,H7 howClass
+```
+
+### Why/What/Contract/How の基本的役割と境界線
 
 **Why 系**はシステムの目的と背景を扱います。ビジネス課題や理想と現実の調整を行い、要件定義段階で顧客と共に明らかにします。Why は本質的にアジャイルで柔軟に見直すべき領域であり、Why の変化に対応することがアジャイル開発の本質です。
 
-**What 系**は実現すべき機能と構造を定義します。Kruchten の 4+1 アーキテクチャビュー（Logical, Development, Process, Physical + Scenarios）で網羅的に扱い、外部との整合性を保証するため最初に全て決め切るのが原則です。変更があれば再契約や影響範囲の明確化が必要となる、整合性を守るために事前に定義すべき領域です。
+**What 系**は「何を作るか」を定義します。Kruchten の 4+1 アーキテクチャビュー(Logical, Development, Process, Physical + Scenarios)により機能・構造・技術選択の論理的根拠を確立します。技術は手段ではなく可能性の境界を定める制約であり、設計判断の基盤となる領域です。
 
-**How 系**は実装と運用の手段を扱います。コーディング規約、CI/CD、テスト戦略、リリース方式などはチーム内裁量で決められる領域であり、アジャイルで柔軟に変更可能な内部完結する実装詳細です。
+**Contract 系**は「どのような実装契約で作るか」を定義します。C4 モデル(Context, Container, Component, Code)により What 系の設計判断を具体的な実装契約に落とし込みます。設計の論理的根拠と実装の橋渡しを行い、外部との整合性を保証する契約層です。
 
-**境界線の判定**は明確です。外部に影響するものは必ず What 系、内部で完結するものは How 系として扱います。「グレーゾーン」は実際には存在せず、外部影響の有無で明確に分類できます。
+**How 系**は「どのような方法で作るか」を定義します。チーム運営、開発プロセス、品質保証の手法など、Contract 系で決定された実装契約を実現するための方法論を扱います。チーム内裁量で決められ、継続的な改善・学習により柔軟に変更可能な領域です。
+
+**4+1 と C4 の逆転現象対策**として、What 系で論理的根拠をまず確立し、Contract 系で段階的に肉付けする 2 層構造を採用します。これによりトップダウンの「フェーズ化の罠」(Development/Process 軽視による実装破綻)とボトムアップの「論理化不足の罠」(Container 根拠不足によるアーキテクチャ不在)を相互補完で解決します。
+
+**境界線の判定**は「設計判断」「実装契約」「実現方法」の違いです。論理的根拠に関わるものは What 系、具体的契約に関わるものは Contract 系、プロセス・手順に関わるものは How 系として扱います。「グレーゾーン」は実際には存在せず、この観点で明確に分類できます。
 
 理想と現実のペアによる対比構造により、並行作業可能で柔軟性の高い設計書構造を実現します。各軸における理想と現実の建設的な対話により、早期のフィードバックループが形成されます。
-
-## 構造と依存関係
-
-### 1. 全体構造：軸間の依存関係
-
-```mermaid
-flowchart TD
-    Why[10-vision-reality<br/>Why系]
-    What[20-system-design<br/>What系]
-    Contract[25-implementation-contracts<br/>契約系]
-    How[30-delivery-methods<br/>How系]
-
-    Why --> What
-    What --> Contract
-    What --> How
-    Contract --> How
-
-    How -.フィードバック.-> What
-    What -.フィードバック.-> Why
-    Contract -.設計フィードバック.-> What
-```
-
-### 2. Why 系内部：理想・現実制約・統合解
-
-```mermaid
-flowchart TD
-    subgraph "10-vision-reality"
-        A[01-core-vision<br/>コアビジョン]
-        B[02-organizational-capacity<br/>組織能力]
-        C[03-external-environment<br/>外部環境分析]
-        D[04-system-properties<br/>システム制約]
-
-        A --> B
-        A --> C
-        A --> D
-        B --> C
-        B --> D
-        C --> D
-    end
-```
-
-### 3. What 系内部：ユーザー・システム軸の正反合
-
-```mermaid
-flowchart TD
-    subgraph "20-system-design"
-        D[01-user-desires<br/>主体：ユーザーの欲求]
-        E[02-system-blueprint<br/>主体：美しいアーキテクチャ]
-        F[03-system-constraints<br/>客体：アーキテクチャ制約]
-        G[04-user-constraints<br/>客体：技術制約込み仕様]
-        H[05-design-synthesis<br/>統合：最終設計]
-
-        D -.機能要件の主体vs客体.- G
-        E -.アーキテクチャの主体vs客体.- F
-        D --> E
-        F --> G
-        D --> H
-        E --> H
-        F --> H
-        G --> H
-    end
-```
-
-### 4. 契約系内部：Design by Contract
-
-```mermaid
-flowchart TD
-    subgraph "25-implementation-contracts"
-        I[01-interface-contracts<br/>API・プロトコル契約]
-        J[02-security-contracts<br/>認証・認可契約]
-        K[03-performance-contracts<br/>性能・SLA契約]
-        L[04-data-contracts<br/>データ形式・整合性契約]
-        M[05-unified-contracts<br/>統合：実装契約書]
-
-        I --> M
-        J --> M
-        K --> M
-        L --> M
-    end
-```
-
-### 5. How 系内部：複数パターン
-
-#### パターン A: QCDS 分割モデル（個人開発向け）
-
-```mermaid
-flowchart TD
-    subgraph "30-delivery-methods-qcds"
-        N[01-quality-cost-ideals<br/>主体：品質・コスト理想]
-        O[02-delivery-scope-limits<br/>客体：納期・スコープ制約]
-        P[03-qcds-synthesis<br/>統合：実現可能なプロセス]
-
-        N -.QCDS主体vs客体.- O
-        N --> P
-        O --> P
-    end
-```
-
-#### パターン B: People/Platform モデル（チーム開発向け）
-
-```mermaid
-flowchart TD
-    subgraph "30-delivery-methods-people-platform"
-        Q[01-craft-driven-flow<br/>主体：理想的なチーム・技能・文化]
-        R[02-pipeline-blueprint<br/>主体：理想的な自動化・ツールチェーン]
-        S[03-people-limits<br/>客体：スキルギャップ・組織制約]
-        T[04-platform-limits<br/>客体：レガシー・インフラ・予算制約]
-        U[05-adaptive-value-stream<br/>統合：制約最適化プロセス]
-
-        Q -.人間系主体vs客体.- S
-        R -.機械系主体vs客体.- T
-        Q --> U
-        R --> U
-        S --> U
-        T --> U
-    end
-```
-
-#### パターン C: Learning/Delivery モデル（DevOps 向け）
-
-```mermaid
-flowchart TD
-    subgraph "30-delivery-methods-learning-delivery"
-        V[01-continuous-learning<br/>主体：仮説検証・実験・改善]
-        W[02-continuous-delivery<br/>主体：リードタイム最短フロー]
-        X[03-risk-guardrails<br/>客体：品質・安全・法令制約]
-        Y[04-resource-caps<br/>客体：工数・コスト・設備上限]
-        Z[05-resilient-process<br/>統合：学習+デリバリ最適化]
-
-        V -.学習系主体vs客体.- X
-        W -.デリバリ系主体vs客体.- Y
-        V --> Z
-        W --> Z
-        X --> Z
-        Y --> Z
-    end
-```
-
-#### パターン D: PDCA 二段モデル（改善重視組織向け）
-
-```mermaid
-flowchart TD
-    subgraph "30-delivery-methods-pdca"
-        AA[01-ideal-plan<br/>主体：理想的計画]
-        BB[02-ideal-execution<br/>主体：理想的実行]
-        CC[03-plan-constraints<br/>客体：計画制約]
-        DD[04-execution-constraints<br/>客体：実行制約]
-        EE[05-feasible-pd<br/>統合：実現可能なPlan-Do]
-
-        FF[06-check-act-metrics<br/>横串：QCDS・DORA・SLI監視層]
-
-        AA -.計画系主体vs客体.- CC
-        BB -.実行系主体vs客体.- DD
-        AA --> EE
-        BB --> EE
-        CC --> EE
-        DD --> EE
-
-        EE --> FF
-        FF -.改善フィードバック.- AA
-        FF -.改善フィードバック.- BB
-    end
-```
-
-## Why 系における設計判断 - なぜ作るのか
-
-Why 系では「なぜ作るのか」という根本的な問いに対して、4 つの観点で答えます。
-
-### 01-core-vision：理想 - ビジョン&スコープ
-
-プロダクトビジョン・設計原則・スコープを定義します。Why の理想像は「複数のシナリオ」として表現できます。インクリメンタルに進める場合は、1 つ目のシナリオを end-to-end で実現することが重要です。ただし、全シナリオを包含する骨格（What）は事前に定義し、2 つ目以降のシナリオで整合性が崩れることを防ぎます。
-
-### 02-organizational-capacity：組織能力
-
-開発体制・技術選択・品質基準等の組織の技術的能力、予算・時間・設備等のリソース制約と活用方針、競合・差別化・価値提案等の市場での立ち位置を定義します。これらは組織の特性に応じた直交分割により並列分析されます。
-
-### 03-external-environment：外部環境分析
-
-PEST 分析（Political・Economic・Social・Technological）に基づく外部環境要因を定義します。政治的要因、経済的要因、社会的要因、技術的要因を分析し、組織が直接コントロールできない外部環境がシステム設計に与える影響を評価します。
-
-### 04-system-properties：システム制約
-
-ISO/IEC 25010 システム及びソフトウェア品質モデルに基づく品質制約・非機能要件を定義します。機能適合性、性能効率性、互換性、ユーザビリティ、信頼性、セキュリティ、保守性、移植性の 8 つの品質特性を網羅的に扱います。
-
-## What 系における設計判断 - 何を作るのか
-
-What 系では「何を作るのか」という問いに対して、[20-system-design](../20-system-design/)でユーザーが本当に欲しいものの理想を描き、技術制約込みの実現可能な仕様という現実を扱います。
-
-### 20-system-design：What 系 - システム設計判断
-
-システム設計は Kruchten 4+1 アーキテクチャビューモデルに基づいて構成されています：
-
-- [01-user-desires](../20-system-design/01-user-desires/) - Scenario View（+1）：ユーザーシナリオと要求
-- [02-system-blueprint](../20-system-design/02-system-blueprint/) - 4 つのアーキテクチャビュー：
-  - Logical View：論理構造とコンポーネント
-  - Process View：プロセスと並行性
-  - Development View：開発とモジュール構成
-  - Physical View：物理配置と環境
-- [03-system-constraints](../20-system-design/03-system-constraints/) - アーキテクチャ制約条件
-- [04-user-constraints](../20-system-design/04-user-constraints/) - 技術制約込み実現可能仕様
-
-## How 系における設計判断 - どう作るのか
-
-How 系では「どう作るのか」という問いに対して、[25-implementation-contracts](../25-implementation-contracts/)で契約系を、[30-delivery-methods](../30-delivery-methods/)で実装・運用方法を扱います。
-
-### 25-implementation-contracts：契約系 - Design by Contract
-
-C4 モデルによる実装契約の定義では、Context（システム境界と外部システムとの関係）から Container（アプリケーション内部の構成要素間契約）、Component（コンテナ内部のコンポーネント間契約）、Code（クラス・インターフェース・データ契約）まで、階層的に契約を定義します。
-
-TBD - 現在構築中
-
-### 30-delivery-methods：How 系 - 実装・運用方法
-
-実装・運用方法ではアジャイル開発の正しい理解が重要です。アジャイルは What の曖昧化ではなく、Why の変化に応じるための仕組みであることを明確にします。「要件を後から決める」や「仕様を曖昧にしておく」という誤解を避け、Why の変化に対応する柔軟性を持ちながらも、What は整合性のため最初に骨格を定義し、How は継続的に改善するという適切な運用を行います。
-
-TBD - 現在構築中
 
 ## 設計書体系の定期振り返り
 

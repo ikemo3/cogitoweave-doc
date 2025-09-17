@@ -12,6 +12,35 @@ depends:
 
 設計判断項目を Kruchten 4+1 アーキテクチャビューモデルの各ビューに適切に分類するため、原典の定義に基づいて各項目がどのビューに属するかを論理的に分析する。
 
+## 図表の色の凡例
+
+```mermaid
+flowchart LR
+    LogicalSample[Logical View]
+    ProcessSample[Process View]
+    DevelopmentSample[Development View]
+    ContractSample[C4 Contract]
+    PhysicalSample[Physical View]
+    ConstraintSample[制約・外部要因]
+    ScenarioSample[Scenario Input]
+
+    classDef logicalColor fill:#bbf,stroke:#333,stroke-width:2px,color:#000;
+    classDef processColor fill:#bfb,stroke:#333,stroke-width:2px,color:#000;
+    classDef developmentColor fill:#bef,stroke:#333,stroke-width:2px,color:#000;
+    classDef contractColor fill:#fbf,stroke:#333,stroke-width:2px,color:#000;
+    classDef physicalColor fill:#fbb,stroke:#333,stroke-width:2px,color:#000;
+    classDef constraintColor fill:#ffa,stroke:#333,stroke-width:2px,color:#000;
+    classDef scenarioColor fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+
+    class LogicalSample logicalColor;
+    class ProcessSample processColor;
+    class DevelopmentSample developmentColor;
+    class ContractSample contractColor;
+    class PhysicalSample physicalColor;
+    class ConstraintSample constraintColor;
+    class ScenarioSample scenarioColor;
+```
+
 ## 分析のアプローチ
 
 各ビューの本質的な関心事を明確化し、設計判断項目がどのビューに最適に配置されるかを論理的に導出する。
@@ -20,7 +49,7 @@ depends:
 
 ### 原典の定義
 
-Kruchten 4+1 アーキテクチャビューモデルは、Philippe Kruchten が 1995 年に提唱したソフトウェアアーキテクチャの記述フレームワークである。4 つの主要ビュー（Logical、Process、Development、Physical）と、これらを統合する Scenario ビュー（"+1"）から構成される。
+Kruchten 4+1 アーキテクチャビューモデルは、Philippe Kruchten が 1995 年に提唱したソフトウェアアーキテクチャの記述フレームワークである。4 つの主要ビュー(Logical、Process、Development、Physical)と、これらを統合する Scenario ビュー("+1")から構成される。
 
 原典論文: <https://www.cs.ubc.ca/~gregor/teaching/papers/4%2B1view-architecture.pdf>
 
@@ -74,18 +103,20 @@ flowchart TB
 
 **職種説明**:
 
-- **BA（ビジネスアナリスト）**: ユースケース分析、ユースケース仕様の作成を担当
-- **UX（UX デザイナー）**: ユーザー体験設計、ジャーニーマップの作成を担当
-- **UI（UI デザイナー）**: プロトタイプ設計を担当
-- **FE（フロントエンドエンジニア）**: UI 実装可能性を考慮したプロトタイプ作成・検証に参加
-- **QA（QA/テスト担当）**: テスト観点での仕様検証、UI 操作可能性検証を担当
-- **PO（プロダクトオーナー）**: 価値確認と最終合意形成を担当
+- **BA(ビジネスアナリスト)**: ユースケース分析、ユースケース仕様の作成を担当
+- **UX(UX デザイナー)**: ユーザー体験設計、ジャーニーマップの作成を担当
+- **UI(UI デザイナー)**: プロトタイプ設計を担当
+- **FE(フロントエンドエンジニア)**: UI 実装可能性を考慮したプロトタイプ作成・検証に参加
+- **QA(QA/テスト担当)**: テスト観点での仕様検証、UI 操作可能性検証を担当
+- **PO(プロダクトオーナー)**: 価値確認と最終合意形成を担当
 
 ### Logical View
 
 > The logical architecture primarily supports the functional requirements—what the system should provide in terms of services to its users. The system is decomposed into a set of key abstractions, taken (mostly) from the problem domain, in the form of objects or object classes. They exploit the principles of abstraction, encapsulation, and inheritance. This decomposition is not only for the sake of functional analysis, but also serves to identify common mechanisms and design elements across the various parts of the system. We use the Rational/Booch approach for representing the logical architecture, by means of class diagrams and class templates.
 > A class diagram shows a set of classes and their logical relationships: association, usage, composition, inheritance, and so forth. Sets of related classes can be grouped into class categories. Class templates focus on each individual class; they emphasize the main class operations, and identify key object characteristics. If it is important to define the internal behavior of an object, this is done with state transition diagrams, or state charts. Common mechanisms or services are defined in class utilities.
 > Alternatively to an OO approach, an application that is very data-driven may use some other form of logical view, such as E-R diagrams.
+
+#### アーキテクチャスタイル決定前の設計フロー
 
 ```mermaid
 flowchart TB
@@ -104,8 +135,6 @@ flowchart TB
     ScreenSpec -->|"UI:視覚デザイン"| VisualDesign
     VisualDesign -->|"FE:UI方針決定"| UIApproach[UI技術方針]
     UIApproach -->|"FE:コンポーネント化"| UIComponents[UIコンポーネント責務]
-    UIComponents -->|"SA:API方針決定"| APIApproach[API技術方針]
-    APIApproach -->|"BE:API設計"| APIContract[API契約]
 
     %% データ側の分岐
     Abstract -->|"BE+SA:ドメイン分析"| DataModel[データモデル]
@@ -113,37 +142,107 @@ flowchart TB
     DatabaseApproach -->|"BE:ドメイン設計"| DomainModel[ドメインモデル]
 
     %% バッチ処理要件
-    FunctionalSpec -->|"BA:バッチ分析"| BatchSpec[バッチ仕様]
+    FunctionalSpec -->|"BA:機能分析"| BatchSpec[バッチ仕様]
+    DomainModel -->|"BE:データ構造分析"| BatchSpec
 
     %% スタイル適用
     class ScenarioInput,UISpecInput scenarioInput;
-    class Abstract,Boundary,FunctionalSpec,ScreenStructure,ScreenSpec,VisualDesign,UIApproach,UIComponents,APIApproach,APIContract,DataModel,DatabaseApproach,DomainModel,BatchSpec artifact;
+    class Abstract,Boundary,FunctionalSpec,ScreenStructure,ScreenSpec,VisualDesign,UIApproach,UIComponents,DataModel,DatabaseApproach,DomainModel,BatchSpec artifact;
+```
+
+#### アーキテクチャスタイル決定とその後の設計フロー
+
+```mermaid
+flowchart TB
+
+    classDef artifact fill:#bbf,stroke:#333,stroke-width:1px,color:#000;
+    classDef constraintInput fill:#ffa,stroke:#333,stroke-width:1px,color:#000;
+    classDef logicalInput fill:#bbf,stroke:#333,stroke-width:1px,color:#000;
+
+    %% 前段階からのインプット
+    BoundaryInput[機能境界と責務]
+    UIComponentsInput[UIコンポーネント責務]
+    ScreenStructureInput[画面構成設計]
+    DomainModelInput[ドメインモデル]
+    BatchSpecInput[バッチ仕様]
+
+    %% 外部制約
+    NFRInput[非機能要件]
+    TeamStructureInput[チーム構造]
+
+    %% バックエンドアーキテクチャスタイル総合判断
+    BoundaryInput -->|"SA:構造要因"| BackendArchStyle[バックエンドアーキテクチャスタイル]
+    NFRInput -->|"SA:性能・可用性要因"| BackendArchStyle
+    DomainModelInput -->|"SA:複雑度要因"| BackendArchStyle
+    BatchSpecInput -->|"SA:処理特性要因"| BackendArchStyle
+    TeamStructureInput -->|"SA:チーム境界要因"| BackendArchStyle
+
+    %% フロントエンドレンダリングスタイル総合判断
+    UIComponentsInput -->|"FE:UI複雑度要因"| FrontendArchStyle[フロントエンドレンダリングスタイル]
+    ScreenStructureInput -->|"FE:UI構成要因"| FrontendArchStyle
+    NFRInput -->|"FE:デプロイ独立性要因"| FrontendArchStyle
+    TeamStructureInput -->|"FE:チーム境界要因"| FrontendArchStyle
+
+    %% アーキテクチャスタイル後の設計継続
+    BackendArchStyle -->|"SA:API方針決定"| APIApproach[API技術方針]
+    FrontendArchStyle -->|"SA:API方針決定"| APIApproach
+    APIApproach -->|"BE:API設計"| APIContract[API契約]
+
+    %% スタイル適用
+    class BoundaryInput,UIComponentsInput,ScreenStructureInput,DomainModelInput,BatchSpecInput logicalInput;
+    class NFRInput,TeamStructureInput constraintInput;
+    class BackendArchStyle,FrontendArchStyle,APIApproach,APIContract artifact;
 ```
 
 **技術方針決定**:
 
 Logical View では機能要件から導出される技術方針レベルの判断を行う：
 
-- **UI 技術方針**: SPA vs MPA、コンポーネント指向 vs ページ指向（ユーザーインタラクションの特性から）
-- **API 技術方針**: REST vs GraphQL vs gRPC（データアクセスパターン、クライアント多様性から）
-- **データベース方針**: RDBMS vs NoSQL、トランザクション vs 柔軟性（データ構造の複雑さ、整合性要件から）
+- **UI 技術方針**: SPA vs MPA、コンポーネント指向 vs ページ指向(ユーザーインタラクションの特性から)
+- **API 技術方針**: REST vs GraphQL vs gRPC(データアクセスパターン、クライアント多様性から)
+- **データベース方針**: RDBMS vs NoSQL、トランザクション vs 柔軟性(データ構造の複雑さ、整合性要件から)
 
 これらは純粋に論理設計から導出可能な技術判断であり、具体的な製品選択は後続のビューで行う。
 
 **データモデルとドメインモデルの設計アプローチ**:
 
-この設計では**DOA（Data Oriented Approach）**に基づき「データモデル → ドメインモデル」の順序を採用している。データ構造を先に確定してからドメインロジックを設計する考え方である。
+この設計では**DOA(Data Oriented Approach)**に基づき「データモデル → ドメインモデル」の順序を採用している。データ構造を先に確定してからドメインロジックを設計する考え方である。
 
-一方、**DDD（Domain Driven Design）**では「ドメインモデル → データモデル」の順序を取り、ビジネスロジックを先に設計してからデータ永続化を考える。プロダクトの性質に応じてアプローチを選択し、両者の協調設計も重要である。
+一方、**DDD(Domain Driven Design)**では「ドメインモデル → データモデル」の順序を取り、ビジネスロジックを先に設計してからデータ永続化を考える。プロダクトの性質に応じてアプローチを選択し、両者の協調設計も重要である。
 
 **職種説明**:
 
-- **SA（システムアーキテクト）**: システム全体の論理設計、抽象化、境界定義を担当
-- **BA（ビジネスアナリスト）**: 機能要件の詳細化を担当
-- **UX（UX デザイナー）**: 画面構成設計、UI マッピングを担当
-- **UI（UI デザイナー）**: 視覚デザイン、デザインシステムを担当
-- **FE（フロントエンドエンジニア）**: UI コンポーネント設計、実装を担当
-- **BE（バックエンドエンジニア）**: データモデル、ドメインモデル、API 設計を担当
+- **SA(システムアーキテクト)**: システム全体の論理設計、抽象化、境界定義を担当
+- **BA(ビジネスアナリスト)**: 機能要件の詳細化を担当
+- **UX(UX デザイナー)**: 画面構成設計、UI マッピングを担当
+- **UI(UI デザイナー)**: 視覚デザイン、デザインシステムを担当
+- **FE(フロントエンドエンジニア)**: UI コンポーネント設計、実装を担当
+- **BE(バックエンドエンジニア)**: データモデル、ドメインモデル、API 設計を担当
+
+<!-- GLOBAL_CONCLUSION_BEGIN: logical-view -->
+
+Logical View では以下の成果物を段階的に作成する:
+
+1. **主要抽象化設計** - システムの根本概念を定義し、ドメインの本質的な概念を明確化する
+2. **機能境界と責務** - Bounded Context を定義し、論理レベルでの境界設定を行う
+3. **機能仕様** - 機能要件を詳細化し、具体的な機能定義を行う
+4. **画面構成設計** - ユーザーインターフェースの構成を設計する
+5. **画面仕様** - 機能仕様と画面構成を統合した画面仕様を定義する
+6. **視覚デザイン** - ユーザーインターフェースの視覚的設計を行う
+7. **UI 技術方針** - UI 実装の技術的方針を決定する(SPA vs MPA 等)
+8. **UI コンポーネント責務** - UI コンポーネントの責務と構造を定義する
+9. **データモデル** - DOA に基づきデータ構造を確立する
+10. **データベース方針** - データベース技術の方針を決定する(RDBMS vs NoSQL 等)
+11. **ドメインモデル** - ビジネスロジックとドメイン設計を行う
+12. **バッチ仕様** - バッチ処理要件を分析し仕様化する
+13. **バックエンドアーキテクチャスタイル** - 機能境界・非機能要件・ドメイン複雑度・バッチ特性・チーム構造から総合判断する(レイヤード・マイクロサービス・モジュラーモノリス等)
+14. **フロントエンドレンダリングスタイル** - UI 複雑度・画面構成・デプロイ独立性・チーム境界から総合判断する(CSR・SSR・SSG・マイクロフロントエンド等)
+15. **API 技術方針** - 両アーキテクチャスタイルから API 実装の技術的方針を決定する(REST vs GraphQL vs gRPC、BFF 必要性等)
+16. **API 契約** - システムに必要な API 群の論理的な契約を定義する
+
+技術方針レベルの判断として、UI 技術方針、両アーキテクチャスタイル、API 技術方針、データベース方針を機能要件・非機能要件・チーム構造から導出する。具体的な製品選択は後続の Development View で行う。
+
+<!-- GLOBAL_CONCLUSION_END: logical-view -->
 
 ### Process View
 
@@ -154,7 +253,7 @@ Logical View では機能要件から導出される技術方針レベルの判�
 > We can distinguish then: major tasks, that are the architectural elements that can be uniquely addressed and minor tasks, that are additional tasks introduced locally for implementation reasons (cyclical activities, buffering, time-outs, etc.). They can be implemented as Ada tasks for example, or light-weight threads.
 > Major tasks communicate via a set of well-defined inter-task communication mechanisms: synchronous and asynchronous message-based communication services, remote procedure calls, event broadcast, etc. Minor tasks may communicate by rendezvous or shared memory. Major tasks shall not make assumptions about their collocation in the same process or processing node.
 
-#### Inter-service Level（サービス間）
+#### サービス間プロセス設計
 
 ```mermaid
 flowchart TB
@@ -170,9 +269,9 @@ flowchart TB
     %% Inter-service design flow
     BoundaryInput -->|"SA:サービス分割"| ServiceBoundary[サービス境界設計]
     ServiceBoundary -->|"SA:協調設計"| ServiceCoordination[サービス間協調]
-    NFRInput -->|"SA:整合性分析"| DataConsistency[データ整合性設計]
-    ServiceCoordination -->|"SA:分散通信"| DistributedComm[分散通信設計]
-    DataConsistency -->|"SA:分散通信"| DistributedComm
+    NFRInput -->|"SA:協調設計"| ServiceCoordination
+    ServiceCoordination -->|"SA:整合性分析"| DataConsistency[データ整合性設計]
+    DataConsistency -->|"SA:分散通信"| DistributedComm[分散通信設計]
     DistributedComm -->|"SRE:耐障害性設計"| FaultTolerance[耐障害性設計]
     FaultTolerance -->|"SRE:スケーリング設計"| Scaling[スケーリング設計]
     FaultTolerance -->|"SRE:トレーサビリティ設計"| Traceability[トレーサビリティ設計]
@@ -186,7 +285,7 @@ flowchart TB
     class ServiceBoundary,ServiceCoordination,DataConsistency,DistributedComm,FaultTolerance,Scaling,Traceability,TestStrategy processArtifact;
 ```
 
-#### Intra-service Level（サービス内）
+#### サービス内プロセス設計
 
 ```mermaid
 flowchart TB
@@ -223,28 +322,56 @@ flowchart TB
 
 **機能境界とサービス境界の違い**:
 
-「**機能境界と責務**」（Logical View）は論理的な関心事の分離であり、Bounded Context 的な概念レベルの境界を定義する。「どの機能がどんな責任を持つか」を抽象的に設計する段階である。
+「**機能境界と責務**」(Logical View)は論理的な関心事の分離であり、Bounded Context 的な概念レベルの境界を定義する。「どの機能がどんな責任を持つか」を抽象的に設計する段階である。
 
-「**サービス境界設計**」（Process View）は実行時の分離方式であり、論理的な境界をどう実行するかの具体的な設計である。機能境界で定義された Bounded Context を、マイクロサービス、モジュラモノリス、Shared Kernel 等の様々な協調パターンでどう実現するかを決定する。論理的には分離されていても実行時は統合する場合もあれば、逆に論理的に一つでも実行時は複数に分ける場合もある。
+「**サービス境界設計**」(Process View)は実行時の分離方式であり、論理的な境界をどう実行するかの具体的な設計である。機能境界で定義された Bounded Context を、マイクロサービス、モジュラモノリス、Shared Kernel 等の様々な協調パターンでどう実現するかを決定する。論理的には分離されていても実行時は統合する場合もあれば、逆に論理的に一つでも実行時は複数に分ける場合もある。
 
 **職種説明**:
 
-- **SA（システムアーキテクト）**: サービス境界設計、データ整合性設計、分散通信設計の全体方針を担当
-- **BE（バックエンドエンジニア）**: SA 協業でプロセスモデル、タスクアーキテクチャ、サービス内通信設計を担当
-- **SRE（Site Reliability Engineer）**: 耐障害性、スケーリング、監視、セキュリティ、パフォーマンス設計を担当
-- **QA（QA エンジニア）**: 分散システム全体のテスト実行戦略を担当
+- **SA(システムアーキテクト)**: サービス境界設計、データ整合性設計、分散通信設計の全体方針を担当
+- **BE(バックエンドエンジニア)**: SA 協業でプロセスモデル、タスクアーキテクチャ、サービス内通信設計を担当
+- **SRE(Site Reliability Engineer)**: 耐障害性、スケーリング、監視、セキュリティ、パフォーマンス設計を担当
+- **QA(QA エンジニア)**: 分散システム全体のテスト実行戦略を担当
+
+<!-- GLOBAL_CONCLUSION_BEGIN: process-view -->
+
+Process View では以下の成果物を段階的に作成する:
+
+#### サービス間レベル
+
+1. **サービス境界設計** - 機能境界をサービス実行境界に変換する
+2. **サービス間協調** - サービス間の協調パターンを設計する
+3. **データ整合性設計** - 分散環境での整合性戦略を設計する
+4. **分散通信設計** - サービス間通信の具体的設計を行う
+5. **耐障害性設計** - 障害対応と復旧戦略を設計する
+6. **スケーリング設計** - 負荷分散と拡張性を設計する
+7. **トレーサビリティ設計** - 分散トレーシングと監視を設計する
+8. **システムテスト戦略** - 分散システム全体のテスト戦略を策定する
+
+#### サービス内レベル
+
+1. **リクエスト処理設計** - サービス内のリクエスト処理フローを設計する
+2. **バッチ処理設計** - バッチ処理の実行設計を行う
+3. **トランザクション設計** - データ整合性とトランザクション境界を設計する
+4. **セキュリティ設計** - サービス内のセキュリティ機構を設計する
+5. **パフォーマンス設計** - 性能要件を満たす処理設計を行う
+6. **監視設計** - サービス内の監視とメトリクス設計を行う
+7. **サービス内テスト戦略** - 統合テストとユニットテストの戦略を策定する
+
+<!-- GLOBAL_CONCLUSION_END: process-view -->
 
 ### Development View
 
 > The development architecture focuses on the actual software module organization on the software development environment. The software is packaged in small chunks —program libraries, or subsystems- that can be developed by one or a small number of developers. The subsystems are organized in a hierarchy of layers, each layer providing a narrow and well-defined interface to the layers above it.
 > The development architecture of the system is represented by module and subsystem diagrams, showing the 'export' and 'import' relationships. The complete development architecture can only be described when all the elements of the software have been identified. It is, however, possible to list the rules that govern the development architecture: partitioning, grouping, visibility.
 
-#### Frontend Development Structure
+#### フロントエンド開発構造設計
 
 ```mermaid
 flowchart TB
 
-    classDef developmentArtifact fill:#fbf,stroke:#333,stroke-width:1px,color:#000;
+    classDef developmentArtifact fill:#bef,stroke:#333,stroke-width:2px,color:#000;
+    classDef contractArtifact fill:#fbf,stroke:#333,stroke-width:2px,color:#000;
     classDef logicalInput fill:#bbf,stroke:#333,stroke-width:1px,color:#000;
 
     %% Inputs from Logical View
@@ -252,21 +379,23 @@ flowchart TB
     UIApproachInput[UI技術方針]
 
     %% Frontend development flow
-    UIComponentInput -->|"FE:具体製品選択"| UITechSelection[UI技術選択]
+    UIComponentInput -->|"FE:具体製品選択"| UITechSelection[フロントエンド技術選択]
     UIApproachInput -->|"FE:具体製品選択"| UITechSelection
-    UITechSelection -->|"FE:パッケージ設計"| FrontendPackage[フロントエンドパッケージ設計]
+    UITechSelection -->|"C4:パッケージ設計"| FrontendPackage[フロントエンドパッケージ設計]
 
     %% スタイル適用
     class UIComponentInput,UIApproachInput logicalInput;
-    class UITechSelection,FrontendPackage developmentArtifact;
+    class UITechSelection developmentArtifact;
+    class FrontendPackage contractArtifact;
 ```
 
-#### Backend Development Structure
+#### バックエンド開発構造設計
 
 ```mermaid
 flowchart TB
 
-    classDef developmentArtifact fill:#fbf,stroke:#333,stroke-width:1px,color:#000;
+    classDef developmentArtifact fill:#bef,stroke:#333,stroke-width:2px,color:#000;
+    classDef contractArtifact fill:#fbf,stroke:#333,stroke-width:2px,color:#000;
     classDef logicalInput fill:#bbf,stroke:#333,stroke-width:1px,color:#000;
     classDef processInput fill:#bfb,stroke:#333,stroke-width:1px,color:#000;
 
@@ -274,6 +403,7 @@ flowchart TB
     DomainInput[ドメインモデル]
     DataInput[データモデル]
     APIApproachInput[API技術方針]
+    APIContractInput[API契約]
     DatabaseApproachInput[データベース方針]
 
     %% Inputs from Process View
@@ -282,54 +412,31 @@ flowchart TB
     %% Backend development flow
     DataInput -->|"BE:具体製品選択"| DatabaseTechSelection[DB技術選択]
     DatabaseApproachInput -->|"BE:具体製品選択"| DatabaseTechSelection
-    DatabaseTechSelection -->|"BE:スキーマ設計"| DatabaseSchema[スキーマ設計]
+    DatabaseTechSelection -->|"C4:スキーマ設計"| DatabaseSchema[スキーマ設計]
 
-    APIApproachInput -->|"BE:技術適合性判断"| BackendTechSelection[BE技術選択]
+    APIContractInput -->|"C4:API設計仕様"| APIDesignSpec[API設計仕様]
+    APIApproachInput -->|"BE:技術適合性判断"| BackendTechSelection[バックエンド技術選択]
     DatabaseTechSelection -->|"BE:技術適合性判断"| BackendTechSelection
     NFRInput -->|"BE:性能要件考慮"| BackendTechSelection
 
-    DomainInput -->|"BE:アーキテクチャ設計"| LayerDesign[レイヤー設計]
-    BackendTechSelection -->|"BE:アーキテクチャ設計"| LayerDesign
+    DomainInput -->|"C4:レイヤー構造設計"| LayerDesign[レイヤー実装構造]
+    BackendTechSelection -->|"C4:レイヤー構造設計"| LayerDesign
 
-    LayerDesign -->|"BE:モジュール設計"| BackendModule[バックエンドモジュール設計]
+    LayerDesign -->|"C4:モジュール設計"| BackendModule[バックエンドモジュール設計]
 
-    %% スタイル適用
-    class DomainInput,DataInput,APIApproachInput,DatabaseApproachInput logicalInput;
-    class NFRInput processInput;
-    class LayerDesign,DatabaseTechSelection,BackendTechSelection,DatabaseSchema,BackendModule developmentArtifact;
-```
-
-#### DevOps Structure
-
-```mermaid
-flowchart TB
-
-    classDef developmentArtifact fill:#fbf,stroke:#333,stroke-width:1px,color:#000;
-    classDef developmentInput fill:#fbf,stroke:#333,stroke-width:1px,color:#000;
-
-    %% Inputs from other development structures
-    FrontendPackageInput[フロントエンドパッケージ設計]
-    BackendModuleInput[バックエンドモジュール設計]
-    DatabaseSchemaInput[スキーマ設計]
-
-    %% DevOps design flow
+    %% Git service selection (independent)
     GitService[Gitサービス選定]
 
-    GitService -->|"DevOps:リポジトリ設計"| GitRepository[Gitリポジトリ設計]
-    FrontendPackageInput -->|"DevOps:リポジトリ設計"| GitRepository
-    BackendModuleInput -->|"DevOps:リポジトリ設計"| GitRepository
-    DatabaseSchemaInput -->|"DevOps:リポジトリ設計"| GitRepository
-
-    GitRepository -->|"DevOps:CI/CD設計"| CICDPipeline[CI/CDパイプライン設計]
-
     %% スタイル適用
-    class FrontendPackageInput,BackendModuleInput,DatabaseSchemaInput developmentInput;
-    class GitService,GitRepository,CICDPipeline developmentArtifact;
+    class DomainInput,DataInput,APIApproachInput,APIContractInput,DatabaseApproachInput logicalInput;
+    class NFRInput processInput;
+    class DatabaseTechSelection,BackendTechSelection,GitService developmentArtifact;
+    class LayerDesign,DatabaseSchema,BackendModule,APIDesignSpec contractArtifact;
 ```
 
 **技術選択から実装組織化への変換**:
 
-Logical View で決定された技術方針（SPA/MPA、REST/GraphQL、RDBMS/NoSQL）を受けて、具体的な製品選択と実装組織化を行う：
+Logical View で決定された技術方針(SPA/MPA、REST/GraphQL、RDBMS/NoSQL)を受けて、具体的な製品選択と実装組織化を行う：
 
 - **技術方針 → 具体製品選択**: React vs Vue vs Angular、PostgreSQL vs MySQL vs MongoDB
 - **製品特性 → モジュール構造**: 選択技術の特性に応じたディレクトリ構造、依存関係設計
@@ -337,9 +444,27 @@ Logical View で決定された技術方針（SPA/MPA、REST/GraphQL、RDBMS/NoS
 
 **職種説明**:
 
-- **FE（フロントエンドエンジニア）**: UI 技術選択、フロントエンドパッケージ設計を担当
-- **BE（バックエンドエンジニア）**: API 実装構造設計、バックエンド技術選択、DB 技術選択、モジュール設計、スキーマ設計を担当
-- **TL（テックリード）**: システム統合設計、チーム編成を担当
+- **FE(フロントエンドエンジニア)**: フロントエンド 技術選択、フロントエンドパッケージ設計を担当
+- **BE(バックエンドエンジニア)**: API 実装構造設計、バックエンド技術選択、DB 技術選択、モジュール設計、スキーマ設計を担当
+- **TL(テックリード)**: システム統合設計、チーム編成を担当
+
+<!-- GLOBAL_CONCLUSION_BEGIN: development-view -->
+
+Development View では以下の成果物を段階的に作成する:
+
+### Frontend Development Structure
+
+1. **フロントエンド技術選択** - UI 技術方針を具体的な製品選択に変換する
+
+### Backend Development Structure
+
+1. **DB 技術選択** - データベース方針を具体的な製品選択に変換する
+2. **バックエンド技術選択** - バックエンド技術の具体的な製品選択を行う
+3. **Git サービス選定** - バージョン管理システムを選定する
+
+Logical View で決定された技術方針を具体的な製品選択に変換し、開発チームが効率的に作業できる技術基盤を確立する。
+
+<!-- GLOBAL_CONCLUSION_END: development-view -->
 
 ### Physical View
 
@@ -363,9 +488,18 @@ flowchart TB
     BackendModuleInput[バックエンドモジュール設計]
     FrontendPackageInput[フロントエンドパッケージ設計]
     DatabaseSchemaInput[スキーマ設計]
+    GitServiceInput[Gitサービス選定]
 
     %% Inputs from constraints
     NFRInput[非機能要件]
+
+    %% DevOps physical infrastructure
+    GitServiceInput -->|"SRE:リポジトリ設計"| GitRepository[Gitリポジトリ設計]
+    BackendModuleInput -->|"SRE:リポジトリ設計"| GitRepository
+    FrontendPackageInput -->|"SRE:リポジトリ設計"| GitRepository
+    DatabaseSchemaInput -->|"SRE:リポジトリ設計"| GitRepository
+
+    GitRepository -->|"SRE:CI/CD設計"| CICDPipeline[CI/CDパイプライン設計]
 
     %% Physical deployment design
     ScalingInput -->|"SRE:インフラ設計"| CloudInfrastructure[クラウドインフラ設計]
@@ -378,6 +512,7 @@ flowchart TB
 
     CloudInfrastructure -->|"SRE:デプロイメント設計"| DeploymentConfig[デプロイメント構成]
     ContainerDesign -->|"SRE:デプロイメント設計"| DeploymentConfig
+    CICDPipeline -->|"SRE:デプロイメント設計"| DeploymentConfig
 
     SecurityInput -->|"SRE:ネットワーク設計"| NetworkSecurity[ネットワークセキュリティ]
     MonitoringInput -->|"SRE:オブザーバビリティ設計"| ObservabilityStack[オブザーバビリティスタック]
@@ -389,8 +524,9 @@ flowchart TB
     %% スタイル適用
     class ScalingInput,FaultToleranceInput,SecurityInput,MonitoringInput processInput;
     class BackendModuleInput,FrontendPackageInput,DatabaseSchemaInput developmentInput;
+    class GitServiceInput developmentInput;
     class NFRInput constraintInput;
-    class CloudInfrastructure,ContainerDesign,DeploymentConfig,NetworkSecurity,ObservabilityStack,EnvironmentConfig physicalArtifact;
+    class GitRepository,CICDPipeline,CloudInfrastructure,ContainerDesign,DeploymentConfig,NetworkSecurity,ObservabilityStack,EnvironmentConfig physicalArtifact;
 ```
 
 **クラウド前提の物理設計**:
@@ -406,4 +542,28 @@ Physical View ではクラウドネイティブなインフラ設計を行う：
 
 **職種説明**:
 
-- **SRE（Site Reliability Engineer）**: すべての物理設計とインフラ運用を担当
+- **SRE(Site Reliability Engineer)**: すべての物理設計とインフラ運用を担当
+
+<!-- GLOBAL_CONCLUSION_BEGIN: physical-view -->
+
+Physical View では以下の成果物を段階的に作成する:
+
+### インフラ技術選択
+
+1. **ホスティング方式選択** - セルフホスト/マネージドサービス/分散構成等の運用方式を選択する
+2. **コンテナ技術選択** - コンテナランタイムとオーケストレーション技術を選択する
+3. **CI/CD 技術選択** - 継続的インテグレーション・デプロイメント技術を選択する
+4. **インフラ管理技術選択** - インフラストラクチャ管理・自動化技術を選択する
+5. **監視・ログ技術選択** - システム監視・ログ管理技術を選択する
+6. **ネットワーク技術選択** - 負荷分散・CDN・セキュリティ技術を選択する
+7. **ログ収集・転送技術選択** - アプリケーションログを監視基盤に送信する技術を選択する
+8. **APM 技術選択** - アプリケーション性能監視機能の提供技術を選択する
+9. **トレーシング技術選択** - 分散トレーシング機能の提供技術を選択する
+10. **バックアップ方法技術選択** - データ保護のためのバックアップ実行技術を選択する
+11. **バックアップ先技術選択** - バックアップデータの保存先技術を選択する
+12. **シークレット管理技術選択** - 認証情報・API キー等の安全な管理技術を選択する
+13. **SSL 証明書管理技術選択** - HTTPS 通信のための証明書管理技術を選択する
+
+Process View での設計要件と Development View での技術選択を受けて、物理的な運用基盤に必要な具体的技術を選定する。非機能要件(可用性・信頼性・性能・拡張性)を満たすクラウドネイティブなインフラ設計を行う。
+
+<!-- GLOBAL_CONCLUSION_END: physical-view -->

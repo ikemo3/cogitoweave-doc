@@ -18,7 +18,7 @@ depends:
 
 ## 概要
 
-CogitoWeave システムの設計判断における**外部環境要因**を分析する。PEST 分析（Political, Economic, Social, Technological）フレームワークを個人開発向けに調整し、組織が直接コントロールできない外部要因がシステム設計に与える影響を評価する。
+CogitoWeave システムの設計判断における**外部環境要因**を分析する。PEST 分析(Political, Economic, Social, Technological)フレームワークを個人開発向けに調整し、組織が直接コントロールできない外部要因がシステム設計に与える影響を評価する。
 
 ## 処理フロー
 
@@ -40,7 +40,7 @@ graph TD
 
 ### PEST分析の一般的定義
 
-PEST分析（Political, Economic, Social, Technological）は外部環境分析の基本フレームワーク。
+PEST分析(Political, Economic, Social, Technological)は外部環境分析の基本フレームワーク。
 
 - **政治的要因(Political)**: 法律・規制・政治的安定性・政府政策・税制
 - **経済的要因(Economic)**: 経済成長率・インフレ・金利・為替・景気動向

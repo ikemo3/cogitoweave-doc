@@ -5,7 +5,9 @@ depends:
   contracts:
     - "scenario-1"
   produces:
-    - "scenario-01-ui-elements"
+    - "scenario-01-ui-elements-list"
+    - "literature-reading-workflow"
+    - "concept-creation-subworkflow"
 ---
 
 # シナリオ 1 からの UI 要素導出: 記事発見から文献メモ作成への体験分析
@@ -60,9 +62,11 @@ Scenario-based Design の手法でユーザー体験から必要 UI 要素を導
 
 ## 結論
 
-シナリオ 1 の体験フロー分析により、以下の 8 つの UI 要素が必要であることが特定される：
+シナリオ 1 の体験フロー分析により、以下の UI 要素とシステム処理フローが必要であることが特定される：
 
-<!-- FOUNDATION_BEGIN: scenario-01-ui-elements -->
+### シナリオ 1 UI 要素
+
+<!-- GLOBAL_CONCLUSION_BEGIN: scenario-01-ui-elements-list -->
 
 1. **URL 入力フィールド** - 外部記事の URL 入力
 2. **記事取得・解析処理** - URL 指定による外部記事の取得と内容解析
@@ -73,6 +77,49 @@ Scenario-based Design の手法でユーザー体験から必要 UI 要素を導
 7. **文献メモ保存機能** - 修正した内容を個人の知識体系に保存
 8. **複数概念適用機能** - 同一記事を別の概念の観点でも読み直し
 
-<!-- FOUNDATION_END: scenario-01-ui-elements -->
+<!-- GLOBAL_CONCLUSION_END: scenario-01-ui-elements-list -->
 
-これらの UI 要素により、従来の「保存するだけ」から「即座の文献メモ作成」への体験変革が実現される。
+### シナリオ 1 システム処理フロー
+
+#### 文献読み込み・要約作成ワークフロー
+
+<!-- GLOBAL_CONCLUSION_BEGIN: literature-reading-workflow -->
+
+- **目的**: 外部文献を概念に紐付けて知識を蓄積する
+- **トリガ**: ユーザーが URL 入力フィールドに URL を入力
+- **終了条件**: 文献メモが概念に関連付けられて保存される
+- **境界越え**: 外部記事取得 API、LLM 要約生成 API
+
+```mermaid
+flowchart TD
+    A[URL入力] --> B[記事取得・解析処理]
+    B --> C[概念選択インターフェース]
+    C --> C1{既存概念が見つかったか}
+    C1 -->|Yes| D[LLM観点別要約生成]
+    C1 -->|No| SUB[概念作成サブワークフロー]
+    SUB --> D
+    D --> E[要約修正エディタ]
+    E --> F[文献メモ保存機能]
+```
+
+<!-- GLOBAL_CONCLUSION_END: literature-reading-workflow -->
+
+#### 概念作成サブワークフロー
+
+<!-- GLOBAL_CONCLUSION_BEGIN: concept-creation-subworkflow -->
+
+- **目的**: 新しい概念をシステムに追加する
+- **トリガ**: 概念選択時に既存概念が見つからない場合
+- **終了条件**: 新規概念が作成され選択可能になる
+- **境界越え**: なし (内部処理)
+
+```mermaid
+flowchart TD
+    A[概念作成インターフェース] --> B[関連概念入力]
+    B --> C[概念保存]
+    C --> D[概念選択状態に戻る]
+```
+
+<!-- GLOBAL_CONCLUSION_END: concept-creation-subworkflow -->
+
+これらの UI 要素とシステム処理フローにより、従来の「保存するだけ」から「即座の文献メモ作成」への体験変革が実現される。

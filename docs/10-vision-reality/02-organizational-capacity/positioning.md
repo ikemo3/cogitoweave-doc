@@ -19,7 +19,7 @@ CogitoWeave の現実制約における市場的な制約要素について、PE
 
 ### 既存ツール代替可能性
 
-過去の経験から、主要な既存ツール（Obsidian、Notion、Roam Research 等）では個人の思考支援要求を満たすことができないことが確認されている。
+過去の経験から、主要な既存ツール(Obsidian、Notion、Roam Research 等)では個人の思考支援要求を満たすことができないことが確認されている。
 
 ### 個人開発の市場環境
 
@@ -43,7 +43,7 @@ CogitoWeave の現実制約における市場的な制約要素について、PE
 
 CogitoWeave の市場制約として、以下の設計判断を行う:
 
-<!-- FOUNDATION_BEGIN: market-constraints -->
+<!-- GLOBAL_CONCLUSION_BEGIN: market-constraints -->
 
 ### 既存ツール代替可能性制約
 
@@ -53,6 +53,6 @@ CogitoWeave の市場制約として、以下の設計判断を行う:
 
 - 他者からの評価や社会的な標準に合わせる必要がない。
 
-<!-- FOUNDATION_END: market-constraints -->
+<!-- GLOBAL_CONCLUSION_END: market-constraints -->
 
 既存ツールで代替不可能な独自価値の提供により、限られたリソースでの開発意義を確保する。
