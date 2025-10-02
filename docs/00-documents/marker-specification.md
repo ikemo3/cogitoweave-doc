@@ -18,7 +18,7 @@ depends:
 
 - **結論の継承**: 個別・統合・段階型すべてのタイプで結論を結論集に継承
 - **新規定義**: このファイルで新たに定義・生産する契約内容
-- **基底統合**: Why 系 →11-why-conclusion.md、What 系 →21-what-conclusion.md
+- **基底統合**: Why 系 →11-why-conclusion.md、What 系 →21-01〜05-*-view.md(各ビュー別)
 
 ### GLOBAL_CONCLUSION マーカー記法
 

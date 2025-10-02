@@ -1,6 +1,7 @@
 ---
 doc_type: "pattern-step"
 status: "draft"
+viz_exclude: true
 depends:
   contracts: []
   produces: []

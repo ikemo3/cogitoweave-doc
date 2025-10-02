@@ -5,7 +5,8 @@ depends:
   contracts:
     - "scenario-4"
   produces:
-    - "scenario-04-ui-elements"
+    - "scenario-04-ui-elements-list"
+    - "question-exploration-workflow"
 ---
 
 # シナリオ 4 からの UI 要素導出: 質問から過去知識活用への体験分析
@@ -56,9 +57,9 @@ Scenario-based Design の手法でユーザー体験から必要 UI 要素を導
 
 シナリオ 4 の体験フロー分析により、以下の UI 要素とシステム処理フローが必要であることが特定される：
 
-<!-- GLOBAL_CONCLUSION_BEGIN: scenario-04-ui-elements -->
-
 ### シナリオ 4 UI 要素
+
+<!-- GLOBAL_CONCLUSION_BEGIN: scenario-04-ui-elements-list -->
 
 1. **質問テキスト入力フィールド** - 質問内容を受け取るインターフェース
 2. **質問から概念候補提示機能** - 質問内容から関連しそうな概念候補を提示
@@ -66,9 +67,13 @@ Scenario-based Design の手法でユーザー体験から必要 UI 要素を導
 4. **文献メモ一覧表示機能** - 選択した概念に紐付いた文献メモを表示
 5. **メモ詳細表示機能** - 各メモの詳細内容を参照して過去の体験や知識を思い出す機能
 
+<!-- GLOBAL_CONCLUSION_END: scenario-04-ui-elements-list -->
+
 ### シナリオ 4 システム処理フロー
 
 #### 質問探索・概念発見ワークフロー
+
+<!-- GLOBAL_CONCLUSION_BEGIN: question-exploration-workflow -->
 
 - **目的**: 質問から関連概念を発見してメモを参照する
 - **トリガ**: ユーザーが質問テキスト入力フィールドに質問を入力
@@ -83,6 +88,6 @@ flowchart TD
     D --> E[メモ詳細表示]
 ```
 
-<!-- GLOBAL_CONCLUSION_END: scenario-04-ui-elements -->
+<!-- GLOBAL_CONCLUSION_END: question-exploration-workflow -->
 
 これらの UI 要素とシステム処理フローにより、従来の「知識の所在不明」から「関連知識の効率的活用」への体験変革が実現される。

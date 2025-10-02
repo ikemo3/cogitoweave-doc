@@ -5,7 +5,8 @@ depends:
   contracts:
     - "scenario-2"
   produces:
-    - "scenario-02-ui-elements"
+    - "scenario-02-ui-elements-list"
+    - "concept-relationship-building-workflow"
 ---
 
 # シナリオ 2 からの UI 要素導出: 散らばった概念から思考地図への体験分析
@@ -54,22 +55,26 @@ Scenario-based Design の手法でユーザー体験から必要 UI 要素を導
 
 シナリオ 2 の体験フロー分析により、以下の UI 要素とシステム処理フローが必要であることが特定される：
 
-<!-- GLOBAL_CONCLUSION_BEGIN: scenario-02-ui-elements -->
-
 ### シナリオ 2 UI 要素
+
+<!-- GLOBAL_CONCLUSION_BEGIN: scenario-02-ui-elements-list -->
 
 1. **概念カード UI** - 概念を視覚的に操作可能なカード形式で表示
 2. **ドラッグ&ドロップ空間配置機能** - 直感的な位置決めインターフェース
 3. **近接度ベースクラスタ認識・境界表示機能** - 近くに置かれた概念のクラスタ認識と視覚的境界表示
 4. **グループ名・説明入力機能** - 形成されたグループへの名前や説明の後付け入力
 
+<!-- GLOBAL_CONCLUSION_END: scenario-02-ui-elements-list -->
+
 ### シナリオ 2 システム処理フロー
 
 #### 概念関係性構築ワークフロー
 
-- **目的**: 概念間の関係を発見・定義して知識ネットワークを構築する  
-- **トリガ**: ユーザーが空間配置インターフェースで概念を操作  
-- **終了条件**: 概念関連が定義されてネットワークに記録される  
+<!-- GLOBAL_CONCLUSION_BEGIN: concept-relationship-building-workflow -->
+
+- **目的**: 概念間の関係を発見・定義して知識ネットワークを構築する
+- **トリガ**: ユーザーが空間配置インターフェースで概念を操作
+- **終了条件**: 概念関連が定義されてネットワークに記録される
 - **境界越え**: クラスタ認識アルゴリズム
 
 ```mermaid
@@ -81,6 +86,6 @@ flowchart TD
     E --> F[関係性ネットワーク記録]
 ```
 
-<!-- GLOBAL_CONCLUSION_END: scenario-02-ui-elements -->
+<!-- GLOBAL_CONCLUSION_END: concept-relationship-building-workflow -->
 
 これらの UI 要素とシステム処理フローにより、従来の「タグ機能による分類」から「KJ 法的な直感的整理」への体験変革が実現される。

@@ -18,23 +18,18 @@ C4 モデルに基づき、システム実装における各レベルの契約�
 
 実行可能単位レベルの大きな構造契約を定義します。
 
-<!-- TODO: 以下のディレクトリは未実装
-- [01-frontend-container](01-frontend-container/) - フロントエンドパッケージ設計
-- [02-backend-container](02-backend-container/) - バックエンドモジュール設計
-- [03-database-container](03-database-container/) - スキーマ設計
-- [04-layer-structure](04-layer-structure/) - レイヤー実装構造
--->
+- [フロントエンドパッケージ設計](01-frontend-container/README.md)
+- [バックエンドモジュール設計](02-backend-container/README.md)
+- [スキーマ設計](03-database-container/README.md)
 
 ### Component レベル契約
 
 コンポーネント間の詳細な契約を定義します。
 
-<!-- TODO: 以下のディレクトリは未実装
-- [05-api-specifications](05-api-specifications/) - API設計仕様
-- [06-ui-components](06-ui-components/) - UIコンポーネント仕様
-- [07-domain-components](07-domain-components/) - ドメインコンポーネント仕様
-- [08-data-access-components](08-data-access-components/) - データアクセス仕様
--->
+- [API設計仕様](04-api-specifications/README.md)
+- [UIコンポーネント仕様](05-ui-components/README.md)
+- [ドメインコンポーネント仕様](06-domain-components/README.md)
+- [データアクセス仕様](07-data-access-components/README.md)
 
 ## 結論
 
