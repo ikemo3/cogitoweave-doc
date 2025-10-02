@@ -1,9 +1,9 @@
 ---
 doc_type: "pattern-step"
 status: "draft"
+viz_exclude: true
 depends:
-  contracts:
-    - "frontend-rendering-style"
+  contracts: []
   produces: []
 ---
 
@@ -31,12 +31,6 @@ UI 技術方針から具体的な製品選択への変換により、開発チ�
 
 解空間制限アプローチにより、技術選択肢を段階的に絞り込み、最終的な製品決定を行う。
 
-<!-- PREMISE_BEGIN: frontend-rendering-style -->
-
-CogitoWeave のフロントエンドレンダリングスタイルとして**CSR(Client-Side Rendering)**を採用する。3 画面間の状態共有効率と軽量なコンポーネント指向の特性を活かし、一人での開発における保守性と理解しやすさを確保する。
-
-<!-- PREMISE_END: frontend-rendering-style -->
-
 ## 処理フロー
 
 ```mermaid
@@ -50,60 +44,35 @@ graph TD
 
 CSR レンダリング方式を前提として、技術選択の基本方針を決定する段階。状態管理、パフォーマンス最適化、開発効率性の優先度を明確化する。
 
-- **[状態管理方針決定](01-state-management-policy/README.md)** - グローバル状態とローカル状態の管理方針決定
-- **[パフォーマンス最適化方針決定](02-performance-optimization-policy/README.md)** - バンドルサイズと実行速度の最適化方針決定
+- **[状態管理方針決定](01-state-management-policy.md)** - グローバル状態とローカル状態の管理方針決定
+- **[パフォーマンス最適化方針決定](02-performance-optimization-policy.md)** - バンドルサイズと実行速度の最適化方針決定
 
 ## ステップ 2: アプリケーション構造評価
 
 CSR レンダリング方式と状態管理方針を前提として、アプリケーション構造を評価する段階。画面間独立性とパフォーマンス要件を両立するアーキテクチャを選定する。
 
-- **[アプリケーション構造評価](03-app-structure-evaluation/README.md)** - CSR と状態管理方針に適したアプリケーション構造の評価
+- **[アプリケーション構造評価](03-app-structure-evaluation.md)** - CSR と状態管理方針に適したアプリケーション構造の評価
 
 ## ステップ 3: 基盤技術選択
 
 決定したレンダリング方式とアプリケーション構造を基盤として、相互依存性の高い主要技術群を選択する段階。個別選択では局所最適に陥り、技術スタック全体として微妙な組み合わせになってしまう。そのため State of JS と State of CSS の全技術領域を調査してから、シナジーのある最適な組み合わせを一括決定する。
 
-- **[フレームワーク調査](04-framework-research/README.md)** - フレームワークの調査
-- **[メタフレームワーク調査](05-metaframework-research/README.md)** - メタフレームワークの調査
-- **[ビルドツール調査](06-build-tools-research/README.md)** - ビルドツールの調査
-- **[CSS 手法調査](07-css-approach-research/README.md)** - CSS 手法の調査
-- **[フロントエンドテストツール調査](08-testing-tools-research/README.md)** - テストツールの調査
-- **[基盤技術選択](09-foundation-tech-selection/README.md)** - 全調査結果を基に技術スタックを一括決定
+- **[フレームワーク調査](04-framework-research.md)** - フレームワークの調査
+- **[メタフレームワーク調査](05-metaframework-research.md)** - メタフレームワークの調査
+- **[ビルドツール調査](06-build-tools-research.md)** - ビルドツールの調査
+- **[CSS 手法調査](07-css-approach-research.md)** - CSS 手法の調査
+- **[フロントエンドテストツール調査](08-testing-tools-research.md)** - テストツールの調査
+- **[基盤技術選択](09-foundation-tech-selection.md)** - 全調査結果を基に技術スタックを一括決定
 
 ## ステップ 4: 補完技術選択
 
 基盤技術の選択結果を前提として、依存する技術群を順次決定する段階。基盤技術では不足する機能を補完し、完全な技術スタックを確立する。
 
-<!-- REFERENCE_BEGIN: foundation-tech-selection -->
-
-選定技術スタック:
-
-- フレームワーク: Solid + TanStack Router
-- ビルドツール: Vite
-- CSS 手法: Tailwind CSS + CSS Modules ハイブリッド構成
-- テスト: Vitest + Testing Library + Playwright
-- UI コンポーネント: Tailwind CSS ベースのカスタム実装
-
-個人最適化による柔軟性と技術選択基準を総合した結果、シンプルで直接的な操作体系を提供する技術スタックを採用する。
-
-<!-- REFERENCE_END: foundation-tech-selection -->
-
-<!-- REFERENCE_BEGIN: state-management-policy -->
-
-CogitoWeave の状態管理方針として以下を採用する。
-
-- 画面間状態共有は実装しない。
-  - 各画面は独立したワークフローを持つため、状態共有の必要性がない。
-- 各画面で独立した状態管理を行う。
-  - 一人開発制約により、理解しやすさと保守性を優先する。
-- 編集中データは一時的にローカルストレージに保存する。
-  - ユーザーの誤操作によるデータ消失を防止する。
-
-<!-- REFERENCE_END: state-management-policy -->
-
 上記の基盤技術選択により、補完技術選択の大部分が完了した。TanStack Router の選択により状態管理とルーティングが内蔵機能として提供され、Tailwind CSS の選択により UI コンポーネントもカスタム実装方針が確定したためである。
 
 残る補完技術選択は、基盤技術に含まれない専門機能のみとなる。
 
-- [グラフ可視化選択](10-graph-visualization-selection/README.md) - 概念間関係の空間配置・可視化ライブラリの調査と選択
+- [グラフ可視化選択](10-graph-visualization-selection.md) - 概念間関係の空間配置・可視化ライブラリの調査と選択
   - 空間配置画面での概念関係性可視化に特化した技術が必要なため
+- [HTTP 通信・API 連携選択](11-http-api-selection.md) - フロントエンドでの HTTP 通信技術の調査と選択
+  - 基盤技術に HTTP 通信ライブラリが含まれていないため

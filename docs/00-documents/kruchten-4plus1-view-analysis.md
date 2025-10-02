@@ -227,18 +227,17 @@ Logical View では以下の成果物を段階的に作成する:
 2. **機能境界と責務** - Bounded Context を定義し、論理レベルでの境界設定を行う
 3. **機能仕様** - 機能要件を詳細化し、具体的な機能定義を行う
 4. **画面構成設計** - ユーザーインターフェースの構成を設計する
-5. **画面仕様** - 機能仕様と画面構成を統合した画面仕様を定義する
-6. **視覚デザイン** - ユーザーインターフェースの視覚的設計を行う
-7. **UI 技術方針** - UI 実装の技術的方針を決定する(SPA vs MPA 等)
-8. **UI コンポーネント責務** - UI コンポーネントの責務と構造を定義する
-9. **データモデル** - DOA に基づきデータ構造を確立する
-10. **データベース方針** - データベース技術の方針を決定する(RDBMS vs NoSQL 等)
-11. **ドメインモデル** - ビジネスロジックとドメイン設計を行う
-12. **バッチ仕様** - バッチ処理要件を分析し仕様化する
-13. **バックエンドアーキテクチャスタイル** - 機能境界・非機能要件・ドメイン複雑度・バッチ特性・チーム構造から総合判断する(レイヤード・マイクロサービス・モジュラーモノリス等)
-14. **フロントエンドレンダリングスタイル** - UI 複雑度・画面構成・デプロイ独立性・チーム境界から総合判断する(CSR・SSR・SSG・マイクロフロントエンド等)
-15. **API 技術方針** - 両アーキテクチャスタイルから API 実装の技術的方針を決定する(REST vs GraphQL vs gRPC、BFF 必要性等)
-16. **API 契約** - システムに必要な API 群の論理的な契約を定義する
+5. **視覚デザイン** - ユーザーインターフェースの視覚的設計を行う
+6. **UI 技術方針** - UI 実装の技術的方針を決定する(SPA vs MPA 等)
+7. **UI コンポーネント責務** - UI コンポーネントの責務と構造を定義する
+8. **データモデル** - DOA に基づきデータ構造を確立する
+9. **データベース方針** - データベース技術の方針を決定する(RDBMS vs NoSQL 等)
+10. **ドメインモデル** - ビジネスロジックとドメイン設計を行う
+11. **バッチ仕様** - バッチ処理要件を分析し仕様化する
+12. **バックエンドアーキテクチャスタイル** - 機能境界・非機能要件・ドメイン複雑度・バッチ特性・チーム構造から総合判断する(レイヤード・マイクロサービス・モジュラーモノリス等)
+13. **フロントエンドレンダリングスタイル** - UI 複雑度・画面構成・デプロイ独立性・チーム境界から総合判断する(CSR・SSR・SSG・マイクロフロントエンド等)
+14. **API 技術方針** - 両アーキテクチャスタイルから API 実装の技術的方針を決定する(REST vs GraphQL vs gRPC、BFF 必要性等)
+15. **API 契約** - システムに必要な API 群の論理的な契約を定義する
 
 技術方針レベルの判断として、UI 技術方針、両アーキテクチャスタイル、API 技術方針、データベース方針を機能要件・非機能要件・チーム構造から導出する。具体的な製品選択は後続の Development View で行う。
 
@@ -261,10 +260,14 @@ flowchart TB
     classDef processArtifact fill:#bfb,stroke:#333,stroke-width:1px,color:#000;
     classDef logicalInput fill:#bbf,stroke:#333,stroke-width:1px,color:#000;
     classDef constraintInput fill:#ffa,stroke:#333,stroke-width:1px,color:#000;
+    classDef physicalOutput fill:#fbb,stroke:#333,stroke-width:1px,color:#000;
 
     %% Inputs from other views
     BoundaryInput[機能境界と責務]
     NFRInput[非機能要件]
+
+    %% Asset/API integration architecture decision
+    NFRInput -->|"SA+SRE: プロセス責務設計"| AssetApiArch[アセット配信・API統合アーキテクチャ]
 
     %% Inter-service design flow
     BoundaryInput -->|"SA:サービス分割"| ServiceBoundary[サービス境界設計]
@@ -279,10 +282,14 @@ flowchart TB
     Scaling -->|"QA:テスト実行戦略"| TestStrategy[システムテスト戦略]
     Traceability -->|"QA:テスト実行戦略"| TestStrategy
 
+    %% Influence on Physical View
+    AssetApiArch -->|"物理配置への影響"| PhysicalViewImpact[Physical View: コンテナ設計]
+
     %% スタイル適用
     class BoundaryInput logicalInput;
     class NFRInput constraintInput;
-    class ServiceBoundary,ServiceCoordination,DataConsistency,DistributedComm,FaultTolerance,Scaling,Traceability,TestStrategy processArtifact;
+    class ServiceBoundary,ServiceCoordination,DataConsistency,DistributedComm,FaultTolerance,Scaling,Traceability,TestStrategy,AssetApiArch processArtifact;
+    class PhysicalViewImpact physicalOutput;
 ```
 
 #### サービス内プロセス設計
@@ -470,63 +477,100 @@ Logical View で決定された技術方針を具体的な製品選択に変換�
 
 > The physical architecture takes into account primarily the non-functional requirements of the system such as availability, reliability (fault-tolerance), performance (throughput), and scalability. The software executes on a network of computers, or processing nodes (or just nodes for short). The various elements identified —networks, processes, tasks, and objects— need to be mapped onto the various nodes. We expect that several different physical configurations will be used: some for development and testing, others for the deployment of the system for various sites or for different customers. The mapping of the software to the nodes therefore needs to be highly flexible and have a minimal impact on the source code itself.
 
+#### 基盤インフラ設計
+
 ```mermaid
 flowchart TB
 
     classDef physicalArtifact fill:#fbb,stroke:#333,stroke-width:1px,color:#000;
+    classDef contractArtifact fill:#bef,stroke:#333,stroke-width:2px,color:#000;
     classDef processInput fill:#bfb,stroke:#333,stroke-width:1px,color:#000;
-    classDef developmentInput fill:#fbf,stroke:#333,stroke-width:1px,color:#000;
     classDef constraintInput fill:#ffa,stroke:#333,stroke-width:1px,color:#000;
 
     %% Inputs from Process View
     ScalingInput[スケーリング設計]
     FaultToleranceInput[耐障害性設計]
-    SecurityInput[セキュリティ設計]
-    MonitoringInput[監視設計]
-
-    %% Inputs from Development View
-    BackendModuleInput[バックエンドモジュール設計]
-    FrontendPackageInput[フロントエンドパッケージ設計]
-    DatabaseSchemaInput[スキーマ設計]
-    GitServiceInput[Gitサービス選定]
 
     %% Inputs from constraints
     NFRInput[非機能要件]
 
-    %% DevOps physical infrastructure
-    GitServiceInput -->|"SRE:リポジトリ設計"| GitRepository[Gitリポジトリ設計]
-    BackendModuleInput -->|"SRE:リポジトリ設計"| GitRepository
-    FrontendPackageInput -->|"SRE:リポジトリ設計"| GitRepository
-    DatabaseSchemaInput -->|"SRE:リポジトリ設計"| GitRepository
+    %% Infrastructure technology selections
+    ScalingInput -->|"SRE:技術選択"| HostingSelection[ホスティング方式選択]
+    FaultToleranceInput -->|"SRE:技術選択"| HostingSelection
+    NFRInput -->|"SRE:技術選択"| HostingSelection
 
-    GitRepository -->|"SRE:CI/CD設計"| CICDPipeline[CI/CDパイプライン設計]
+    HostingSelection -->|"SRE:技術選択"| ContainerTechSelection[コンテナ技術選択]
+    HostingSelection -->|"SRE:技術選択"| CICDTechSelection[CI/CD技術選択]
+    HostingSelection -->|"SRE:技術選択"| BackupMethodSelection[バックアップ方法技術選択]
+    ContainerTechSelection -->|"SRE:技術選択"| InfraMgmtSelection[インフラ管理技術選択]
+    BackupMethodSelection -->|"SRE:技術選択"| BackupStorageSelection[バックアップ先技術選択]
 
-    %% Physical deployment design
-    ScalingInput -->|"SRE:インフラ設計"| CloudInfrastructure[クラウドインフラ設計]
-    FaultToleranceInput -->|"SRE:インフラ設計"| CloudInfrastructure
-    NFRInput -->|"SRE:インフラ設計"| CloudInfrastructure
-
-    BackendModuleInput -->|"SRE:コンテナ化"| ContainerDesign[コンテナ設計]
-    FrontendPackageInput -->|"SRE:コンテナ化"| ContainerDesign
-    DatabaseSchemaInput -->|"SRE:コンテナ化"| ContainerDesign
-
-    CloudInfrastructure -->|"SRE:デプロイメント設計"| DeploymentConfig[デプロイメント構成]
-    ContainerDesign -->|"SRE:デプロイメント設計"| DeploymentConfig
-    CICDPipeline -->|"SRE:デプロイメント設計"| DeploymentConfig
-
-    SecurityInput -->|"SRE:ネットワーク設計"| NetworkSecurity[ネットワークセキュリティ]
-    MonitoringInput -->|"SRE:オブザーバビリティ設計"| ObservabilityStack[オブザーバビリティスタック]
-
-    DeploymentConfig -->|"SRE:環境構成"| EnvironmentConfig[環境構成管理]
-    NetworkSecurity -->|"SRE:環境構成"| EnvironmentConfig
-    ObservabilityStack -->|"SRE:環境構成"| EnvironmentConfig
+    %% C4 Contract structure designs
+    CICDTechSelection -->|"C4:構造設計"| CICDPipelineDesign[CI/CDパイプライン設計]
+    HostingSelection -->|"C4:構造設計"| CloudInfraDesign[クラウドインフラ設計]
+    ContainerTechSelection -->|"C4:構造設計"| ContainerDesign[コンテナ設計]
+    InfraMgmtSelection -->|"C4:構造設計"| DeploymentConfig[デプロイメント構成]
 
     %% スタイル適用
-    class ScalingInput,FaultToleranceInput,SecurityInput,MonitoringInput processInput;
-    class BackendModuleInput,FrontendPackageInput,DatabaseSchemaInput developmentInput;
-    class GitServiceInput developmentInput;
+    class ScalingInput,FaultToleranceInput processInput;
     class NFRInput constraintInput;
-    class GitRepository,CICDPipeline,CloudInfrastructure,ContainerDesign,DeploymentConfig,NetworkSecurity,ObservabilityStack,EnvironmentConfig physicalArtifact;
+    class HostingSelection,ContainerTechSelection,CICDTechSelection,InfraMgmtSelection,BackupMethodSelection,BackupStorageSelection physicalArtifact;
+    class CICDPipelineDesign,CloudInfraDesign,ContainerDesign,DeploymentConfig contractArtifact;
+```
+
+#### 監視・オブザーバビリティ設計
+
+```mermaid
+flowchart TB
+
+    classDef physicalArtifact fill:#fbb,stroke:#333,stroke-width:1px,color:#000;
+    classDef contractArtifact fill:#bef,stroke:#333,stroke-width:2px,color:#000;
+    classDef processInput fill:#bfb,stroke:#333,stroke-width:1px,color:#000;
+
+    %% Inputs from Process View
+    MonitoringInput[監視設計]
+
+    %% Monitoring technology selections
+    MonitoringInput -->|"SRE:技術選択"| MonitoringTechSelection[監視・ログ技術選択]
+
+    MonitoringTechSelection -->|"SRE:技術選択"| LogCollectionSelection[ログ収集・転送技術選択]
+    MonitoringTechSelection -->|"SRE:技術選択"| APMSelection[APM技術選択]
+    MonitoringTechSelection -->|"SRE:技術選択"| TracingSelection[トレーシング技術選択]
+
+    %% C4 Contract structure designs
+    MonitoringTechSelection -->|"C4:構造設計"| ObservabilityStack[オブザーバビリティスタック]
+
+    %% スタイル適用
+    class MonitoringInput processInput;
+    class MonitoringTechSelection,LogCollectionSelection,APMSelection,TracingSelection physicalArtifact;
+    class ObservabilityStack contractArtifact;
+```
+
+#### セキュリティ・ネットワーク設計
+
+```mermaid
+flowchart TB
+
+    classDef physicalArtifact fill:#fbb,stroke:#333,stroke-width:1px,color:#000;
+    classDef contractArtifact fill:#bef,stroke:#333,stroke-width:2px,color:#000;
+    classDef processInput fill:#bfb,stroke:#333,stroke-width:1px,color:#000;
+
+    %% Inputs from Process View
+    SecurityInput[セキュリティ設計]
+
+    %% Security and Network technology selections
+    SecurityInput -->|"SRE:技術選択"| NetworkTechSelection[ネットワーク技術選択]
+    SecurityInput -->|"SRE:技術選択"| SecretMgmtSelection[シークレット管理技術選択]
+    NetworkTechSelection -->|"SRE:技術選択"| SSLCertSelection[SSL証明書管理技術選択]
+
+
+    %% C4 Contract structure designs
+    NetworkTechSelection -->|"C4:構造設計"| NetworkSecurity[ネットワークセキュリティ]
+
+    %% スタイル適用
+    class SecurityInput processInput;
+    class NetworkTechSelection,SecretMgmtSelection,SSLCertSelection physicalArtifact;
+    class NetworkSecurity contractArtifact;
 ```
 
 **クラウド前提の物理設計**:
@@ -548,21 +592,27 @@ Physical View ではクラウドネイティブなインフラ設計を行う：
 
 Physical View では以下の成果物を段階的に作成する:
 
-### インフラ技術選択
+### 基盤インフラ技術選択
 
 1. **ホスティング方式選択** - セルフホスト/マネージドサービス/分散構成等の運用方式を選択する
 2. **コンテナ技術選択** - コンテナランタイムとオーケストレーション技術を選択する
 3. **CI/CD 技術選択** - 継続的インテグレーション・デプロイメント技術を選択する
 4. **インフラ管理技術選択** - インフラストラクチャ管理・自動化技術を選択する
-5. **監視・ログ技術選択** - システム監視・ログ管理技術を選択する
-6. **ネットワーク技術選択** - 負荷分散・CDN・セキュリティ技術を選択する
-7. **ログ収集・転送技術選択** - アプリケーションログを監視基盤に送信する技術を選択する
-8. **APM 技術選択** - アプリケーション性能監視機能の提供技術を選択する
-9. **トレーシング技術選択** - 分散トレーシング機能の提供技術を選択する
-10. **バックアップ方法技術選択** - データ保護のためのバックアップ実行技術を選択する
-11. **バックアップ先技術選択** - バックアップデータの保存先技術を選択する
-12. **シークレット管理技術選択** - 認証情報・API キー等の安全な管理技術を選択する
-13. **SSL 証明書管理技術選択** - HTTPS 通信のための証明書管理技術を選択する
+5. **バックアップ方法技術選択** - データ保護のためのバックアップ実行技術を選択する
+6. **バックアップ先技術選択** - バックアップデータの保存先技術を選択する
+
+### 監視・オブザーバビリティ技術選択
+
+1. **監視・ログ技術選択** - システム監視・ログ管理技術を選択する
+2. **ログ収集・転送技術選択** - アプリケーションログを監視基盤に送信する技術を選択する
+3. **APM 技術選択** - アプリケーション性能監視機能の提供技術を選択する
+4. **トレーシング技術選択** - 分散トレーシング機能の提供技術を選択する
+
+### セキュリティ・ネットワーク技術選択
+
+1. **ネットワーク技術選択** - 負荷分散・CDN・セキュリティ技術を選択する
+2. **シークレット管理技術選択** - 認証情報・API キー等の安全な管理技術を選択する
+3. **SSL 証明書管理技術選択** - HTTPS 通信のための証明書管理技術を選択する
 
 Process View での設計要件と Development View での技術選択を受けて、物理的な運用基盤に必要な具体的技術を選定する。非機能要件(可用性・信頼性・性能・拡張性)を満たすクラウドネイティブなインフラ設計を行う。
 
