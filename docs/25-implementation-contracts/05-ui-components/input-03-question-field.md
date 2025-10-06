@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: question-text-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: question-text-implementation -->
 
 ## データフロー
 
@@ -99,4 +99,4 @@ flowchart TD
 
 複数行テキスト入力に対応が必要
 
-<!-- LOCAL_CONCLUSION_END: question-text-implementation -->
+<!-- GLOBAL_CONCLUSION_END: question-text-implementation -->

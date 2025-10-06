@@ -55,8 +55,9 @@ depends:
 文献エンティティ(Literature):
 
 - 外部文献の書誌情報管理
-- 基本属性: ID、URL、タイトル、取得日時
+- 基本属性: ID、URL、タイトル(Web 記事の場合)、ISBN、著者、出版社、出版年(書籍の場合)
 - 複数の概念観点から文献メモが生成される元情報
+- 同一 URL/ISBN であれば同一文献として識別される
 
 <!-- PREMISE_END: literature-entity -->
 

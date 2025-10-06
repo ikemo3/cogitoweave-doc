@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: group-naming-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: group-naming-implementation -->
 
 ## データフロー
 
@@ -105,4 +105,4 @@ flowchart TD
 
 グループ選択状態での入力モード切り替えが必要
 
-<!-- LOCAL_CONCLUSION_END: group-naming-implementation -->
+<!-- GLOBAL_CONCLUSION_END: group-naming-implementation -->

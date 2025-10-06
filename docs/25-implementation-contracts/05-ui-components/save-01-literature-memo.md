@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: literature-memo-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: literature-memo-implementation -->
 
 ## データフロー
 
@@ -113,4 +113,4 @@ flowchart TD
 
 重複保存の検出と統合機能が必要
 
-<!-- LOCAL_CONCLUSION_END: literature-memo-implementation -->
+<!-- GLOBAL_CONCLUSION_END: literature-memo-implementation -->

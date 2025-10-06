@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: concept-selection-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: concept-selection-implementation -->
 
 ## データフロー
 
@@ -127,4 +127,4 @@ flowchart TD
 
 検索結果の関連度ランキング機能が必要
 
-<!-- LOCAL_CONCLUSION_END: concept-selection-implementation -->
+<!-- GLOBAL_CONCLUSION_END: concept-selection-implementation -->

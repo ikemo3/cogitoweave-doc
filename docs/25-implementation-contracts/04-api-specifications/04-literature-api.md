@@ -6,11 +6,13 @@ depends:
     - "api-contract"
     - "literature-entity"
     - "literature-table-schema"
+    - "web-article-table-schema"
+    - "book-table-schema"
     - "distributed-communication-design"
   produces:
-    - "literature-create-api"
+    - "web-article-create-api"
+    - "book-create-api"
     - "literature-get-single-api"
-    - "literature-get-by-url-api"
 ---
 
 <!-- markdownlint-disable MD024 -->
@@ -28,7 +30,7 @@ CogitoWeave の API 契約は以下の 9 つの論理的 API 群で構成され�
 1. **概念 API**: 作成・読み取り・更新 (削除は優先度低)
 2. **文献メモ API**: 作成・読み取り・更新・概念別一覧取得
 3. **関係性 API**: 作成・読み取り・更新 (概念間の重複関係許可)
-4. **文献 API**: 作成・読み取り (URL・タイトル・引用が必須)
+4. **文献 API**: 作成・読み取り
 
 ### 検索・発見 API
 
@@ -50,8 +52,9 @@ CogitoWeave の API 契約は以下の 9 つの論理的 API 群で構成され�
 文献エンティティ(Literature):
 
 - 外部文献の書誌情報管理
-- 基本属性: ID、URL、タイトル、取得日時
+- 基本属性: ID、URL、タイトル(Web 記事の場合)、ISBN、著者、出版社、出版年(書籍の場合)
 - 複数の概念観点から文献メモが生成される元情報
+- 同一 URL/ISBN であれば同一文献として識別される
 
 <!-- PREMISE_END: literature-entity -->
 
@@ -59,19 +62,53 @@ CogitoWeave の API 契約は以下の 9 つの論理的 API 群で構成され�
 
 ```sql
 -- ============================================
--- Literature (文献) テーブル
+-- Literature (文献) テーブル - 基底
 -- ============================================
 CREATE TABLE literature (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    url VARCHAR(2048) NOT NULL,
-    title VARCHAR(500) NOT NULL,
-    fetched_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    kind VARCHAR(10) NOT NULL CHECK (kind IN ('web', 'book'))
 );
-
-CREATE INDEX idx_literature_url ON literature(url);
 ```
 
 <!-- PREMISE_END: literature-table-schema -->
+
+<!-- PREMISE_BEGIN: web-article-table-schema -->
+
+```sql
+-- ============================================
+-- WebArticle (Web記事) テーブル
+-- ============================================
+CREATE TABLE web_article (
+    literature_id INTEGER PRIMARY KEY,
+    url VARCHAR(2048) NOT NULL CHECK(url != ''),
+    title VARCHAR(500) NOT NULL CHECK(title != ''),
+    FOREIGN KEY (literature_id) REFERENCES literature(id) ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_web_article_url ON web_article(url);
+```
+
+<!-- PREMISE_END: web-article-table-schema -->
+
+<!-- PREMISE_BEGIN: book-table-schema -->
+
+```sql
+-- ============================================
+-- Book (書籍) テーブル
+-- ============================================
+CREATE TABLE book (
+    literature_id INTEGER PRIMARY KEY,
+    isbn VARCHAR(20) NOT NULL UNIQUE CHECK(isbn != ''),
+    author VARCHAR(200) NOT NULL CHECK(author != ''),
+    publisher VARCHAR(200) NOT NULL CHECK(publisher != ''),
+    publication_year INTEGER NOT NULL,
+    FOREIGN KEY (literature_id) REFERENCES literature(id) ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_book_isbn ON book(isbn);
+```
+
+<!-- PREMISE_END: book-table-schema -->
 
 <!-- PREMISE_BEGIN: distributed-communication-design -->
 
@@ -85,17 +122,21 @@ CREATE INDEX idx_literature_url ON literature(url);
 
 ## 概要
 
-文献の作成、読み取りを提供する。文献は外部文献の書誌情報を管理し、複数の概念観点から文献メモが生成される元情報として機能する。更新・削除は不要とし、シンプルな書誌情報管理を実現する。
+文献の作成、読み取りを提供する。文献は外部文献の書誌情報を管理し、複数の概念観点から文献メモが生成される元情報として機能する。
+
+文献種別(Web 記事、書籍)ごとに異なるエンドポイントを提供し、型安全で明確な API 設計を実現する。読み取り API では Union 型レスポンスにより kind フィールドで文献種別を判別可能とする。
+
+更新・削除は不要とし、シンプルな書誌情報管理を実現する。
 
 ## API 一覧
 
-### 1. 文献作成 API
+### 1. Web 記事作成 API
 
-<!-- GLOBAL_CONCLUSION_BEGIN: literature-create-api -->
+<!-- GLOBAL_CONCLUSION_BEGIN: web-article-create-api -->
 
 #### エンドポイント
 
-- パス: `/api/literatures`
+- パス: `/api/literatures/web-articles`
 - メソッド: POST
 
 #### リクエストスキーマ
@@ -103,12 +144,12 @@ CREATE INDEX idx_literature_url ON literature(url);
 - url
   - 型: string
   - 必須/任意: 必須
-  - 説明: 文献の URL
+  - 説明: Web 記事の URL
   - バリデーション: 1-2048 文字、URL 形式
 - title
   - 型: string
   - 必須/任意: 必須
-  - 説明: 文献のタイトル
+  - 説明: Web 記事のタイトル
   - バリデーション: 1-500 文字
 
 #### レスポンススキーマ(成功時)
@@ -117,15 +158,15 @@ CREATE INDEX idx_literature_url ON literature(url);
 - id
   - 型: integer
   - 説明: 作成された文献の ID
+- kind
+  - 型: string
+  - 説明: 文献種別('web')
 - url
   - 型: string
-  - 説明: 文献の URL
+  - 説明: Web 記事の URL
 - title
   - 型: string
-  - 説明: 文献のタイトル
-- fetched_at
-  - 型: string
-  - 説明: 取得日時(ISO 8601 形式)
+  - 説明: Web 記事のタイトル
 
 #### エラーレスポンス
 
@@ -146,9 +187,84 @@ CREATE INDEX idx_literature_url ON literature(url);
       - 型: string
       - 説明: エラーメッセージ
 
-<!-- GLOBAL_CONCLUSION_END: literature-create-api -->
+<!-- GLOBAL_CONCLUSION_END: web-article-create-api -->
 
-### 2. 文献読み取り API(単一)
+### 2. 書籍作成 API
+
+<!-- GLOBAL_CONCLUSION_BEGIN: book-create-api -->
+
+#### エンドポイント
+
+- パス: `/api/literatures/books`
+- メソッド: POST
+
+#### リクエストスキーマ
+
+- isbn
+  - 型: string
+  - 必須/任意: 必須
+  - 説明: 書籍の ISBN
+  - バリデーション: 1-20 文字
+- author
+  - 型: string
+  - 必須/任意: 必須
+  - 説明: 著者名
+  - バリデーション: 1-200 文字
+- publisher
+  - 型: string
+  - 必須/任意: 必須
+  - 説明: 出版社
+  - バリデーション: 1-200 文字
+- publication_year
+  - 型: integer
+  - 必須/任意: 必須
+  - 説明: 出版年
+  - バリデーション: 正の整数
+
+#### レスポンススキーマ(成功時)
+
+- HTTP ステータス: 201 Created
+- id
+  - 型: integer
+  - 説明: 作成された文献の ID
+- kind
+  - 型: string
+  - 説明: 文献種別('book')
+- isbn
+  - 型: string
+  - 説明: 書籍の ISBN
+- author
+  - 型: string
+  - 説明: 著者名
+- publisher
+  - 型: string
+  - 説明: 出版社
+- publication_year
+  - 型: integer
+  - 説明: 出版年
+
+#### エラーレスポンス
+
+- 400 Bad Request
+  - 原因: バリデーションエラー(文字数超過、必須フィールド欠如、ISBN 重複)
+  - レスポンス:
+    - error
+      - 型: string
+      - 説明: エラーメッセージ
+    - details
+      - 型: array
+      - 要素の型: string
+      - 説明: バリデーションエラーの詳細メッセージリスト
+- 500 Internal Server Error
+  - 原因: サーバー内部エラー
+  - レスポンス:
+    - error
+      - 型: string
+      - 説明: エラーメッセージ
+
+<!-- GLOBAL_CONCLUSION_END: book-create-api -->
+
+### 3. 文献読み取り API(単一)
 
 <!-- GLOBAL_CONCLUSION_BEGIN: literature-get-single-api -->
 
@@ -168,18 +284,39 @@ CREATE INDEX idx_literature_url ON literature(url);
 #### レスポンススキーマ(成功時)
 
 - HTTP ステータス: 200 OK
-- id
-  - 型: integer
-  - 説明: 文献 ID
-- url
-  - 型: string
-  - 説明: 文献の URL
-- title
-  - 型: string
-  - 説明: 文献のタイトル
-- fetched_at
-  - 型: string
-  - 説明: 取得日時(ISO 8601 形式)
+- Union 型: kind フィールドにより Web 記事または書籍を判別
+- **Web 記事の場合:**
+  - id
+    - 型: integer
+    - 説明: 文献 ID
+  - kind
+    - 型: string
+    - 説明: 文献種別('web')
+  - url
+    - 型: string
+    - 説明: Web 記事の URL
+  - title
+    - 型: string
+    - 説明: Web 記事のタイトル
+- **書籍の場合:**
+  - id
+    - 型: integer
+    - 説明: 文献 ID
+  - kind
+    - 型: string
+    - 説明: 文献種別('book')
+  - isbn
+    - 型: string
+    - 説明: 書籍の ISBN
+  - author
+    - 型: string
+    - 説明: 著者名
+  - publisher
+    - 型: string
+    - 説明: 出版社
+  - publication_year
+    - 型: integer
+    - 説明: 出版年
 
 #### エラーレスポンス
 
@@ -198,64 +335,11 @@ CREATE INDEX idx_literature_url ON literature(url);
 
 <!-- GLOBAL_CONCLUSION_END: literature-get-single-api -->
 
-### 3. 文献読み取り API(URL 検索)
-
-<!-- GLOBAL_CONCLUSION_BEGIN: literature-get-by-url-api -->
-
-#### エンドポイント
-
-- パス: `/api/literatures/search`
-- メソッド: GET
-
-#### クエリパラメータ
-
-- url
-  - 型: string
-  - 必須/任意: 必須
-  - 説明: 検索する URL(完全一致)
-  - バリデーション: 1-2048 文字
-
-#### レスポンススキーマ(成功時)
-
-- HTTP ステータス: 200 OK
-- literatures
-  - 型: array
-  - 説明: 文献のリスト(完全一致する URL の文献のみ)
-  - 要素:
-    - id
-      - 型: integer
-      - 説明: 文献 ID
-    - url
-      - 型: string
-      - 説明: 文献の URL
-    - title
-      - 型: string
-      - 説明: 文献のタイトル
-    - fetched_at
-      - 型: string
-      - 説明: 取得日時(ISO 8601 形式)
-
-#### エラーレスポンス
-
-- 400 Bad Request
-  - 原因: バリデーションエラー(url パラメータ欠如、文字数超過)
-  - レスポンス:
-    - error
-      - 型: string
-      - 説明: エラーメッセージ
-    - details
-      - 型: array
-      - 要素の型: string
-      - 説明: バリデーションエラーの詳細メッセージリスト
-- 500 Internal Server Error
-  - 原因: サーバー内部エラー
-  - レスポンス:
-    - error
-      - 型: string
-      - 説明: エラーメッセージ
-
-<!-- GLOBAL_CONCLUSION_END: literature-get-by-url-api -->
-
 ## 結論
 
-文献 API として、作成・読み取り(単一・URL 検索)の 3 つのエンドポイントを定義した。更新・削除 API は不要として除外した。各エンドポイントは GET/POST による CQS ベースの RESTful 設計に従い、適切な HTTP ステータスコードとエラーハンドリングを提供する。URL 検索機能により、同一 URL の文献の重複登録を防止できる。
+文献 API として、文献種別ごとの作成エンドポイントと ID による読み取りエンドポイントを定義した:
+
+- **作成 API**: Web 記事(`/api/literatures/web-articles`)と書籍(`/api/literatures/books`)で別エンドポイントを提供し、型安全性を確保。同一 URL/ISBN の重複登録時は 400 エラーを返す。
+- **読み取り API**: ID による単一取得エンドポイントで、Union 型レスポンスにより kind フィールドで文献種別を判別可能。
+
+更新・削除 API は不要として除外した。各エンドポイントは GET/POST による CQS ベースの RESTful 設計に従い、適切な HTTP ステータスコードとエラーハンドリングを提供する。

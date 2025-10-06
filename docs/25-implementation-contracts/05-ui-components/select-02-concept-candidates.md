@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: concept-candidates-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: concept-candidates-implementation -->
 
 ## データフロー
 
@@ -106,4 +106,4 @@ flowchart TD
 
 複数選択可能なチェックボックス形式
 
-<!-- LOCAL_CONCLUSION_END: concept-candidates-implementation -->
+<!-- GLOBAL_CONCLUSION_END: concept-candidates-implementation -->

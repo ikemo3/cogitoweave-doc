@@ -794,11 +794,11 @@ C4 モデルの Component レベルで定義された API 仕様を統合する�
 
 ### 文献 API
 
-<!-- REFERENCE_BEGIN: literature-create-api -->
+<!-- REFERENCE_BEGIN: web-article-create-api -->
 
 #### エンドポイント
 
-- パス: `/api/literatures`
+- パス: `/api/literatures/web-articles`
 - メソッド: POST
 
 #### リクエストスキーマ
@@ -806,12 +806,12 @@ C4 モデルの Component レベルで定義された API 仕様を統合する�
 - url
   - 型: string
   - 必須/任意: 必須
-  - 説明: 文献の URL
+  - 説明: Web 記事の URL
   - バリデーション: 1-2048 文字、URL 形式
 - title
   - 型: string
   - 必須/任意: 必須
-  - 説明: 文献のタイトル
+  - 説明: Web 記事のタイトル
   - バリデーション: 1-500 文字
 
 #### レスポンススキーマ(成功時)
@@ -820,15 +820,15 @@ C4 モデルの Component レベルで定義された API 仕様を統合する�
 - id
   - 型: integer
   - 説明: 作成された文献の ID
+- kind
+  - 型: string
+  - 説明: 文献種別('web')
 - url
   - 型: string
-  - 説明: 文献の URL
+  - 説明: Web 記事の URL
 - title
   - 型: string
-  - 説明: 文献のタイトル
-- fetched_at
-  - 型: string
-  - 説明: 取得日時(ISO 8601 形式)
+  - 説明: Web 記事のタイトル
 
 #### エラーレスポンス
 
@@ -849,7 +849,80 @@ C4 モデルの Component レベルで定義された API 仕様を統合する�
       - 型: string
       - 説明: エラーメッセージ
 
-<!-- REFERENCE_END: literature-create-api -->
+<!-- REFERENCE_END: web-article-create-api -->
+
+<!-- REFERENCE_BEGIN: book-create-api -->
+
+#### エンドポイント
+
+- パス: `/api/literatures/books`
+- メソッド: POST
+
+#### リクエストスキーマ
+
+- isbn
+  - 型: string
+  - 必須/任意: 必須
+  - 説明: 書籍の ISBN
+  - バリデーション: 1-20 文字
+- author
+  - 型: string
+  - 必須/任意: 必須
+  - 説明: 著者名
+  - バリデーション: 1-200 文字
+- publisher
+  - 型: string
+  - 必須/任意: 必須
+  - 説明: 出版社
+  - バリデーション: 1-200 文字
+- publication_year
+  - 型: integer
+  - 必須/任意: 必須
+  - 説明: 出版年
+  - バリデーション: 正の整数
+
+#### レスポンススキーマ(成功時)
+
+- HTTP ステータス: 201 Created
+- id
+  - 型: integer
+  - 説明: 作成された文献の ID
+- kind
+  - 型: string
+  - 説明: 文献種別('book')
+- isbn
+  - 型: string
+  - 説明: 書籍の ISBN
+- author
+  - 型: string
+  - 説明: 著者名
+- publisher
+  - 型: string
+  - 説明: 出版社
+- publication_year
+  - 型: integer
+  - 説明: 出版年
+
+#### エラーレスポンス
+
+- 400 Bad Request
+  - 原因: バリデーションエラー(文字数超過、必須フィールド欠如、ISBN 重複)
+  - レスポンス:
+    - error
+      - 型: string
+      - 説明: エラーメッセージ
+    - details
+      - 型: array
+      - 要素の型: string
+      - 説明: バリデーションエラーの詳細メッセージリスト
+- 500 Internal Server Error
+  - 原因: サーバー内部エラー
+  - レスポンス:
+    - error
+      - 型: string
+      - 説明: エラーメッセージ
+
+<!-- REFERENCE_END: book-create-api -->
 
 <!-- REFERENCE_BEGIN: literature-get-single-api -->
 
@@ -869,18 +942,39 @@ C4 モデルの Component レベルで定義された API 仕様を統合する�
 #### レスポンススキーマ(成功時)
 
 - HTTP ステータス: 200 OK
-- id
-  - 型: integer
-  - 説明: 文献 ID
-- url
-  - 型: string
-  - 説明: 文献の URL
-- title
-  - 型: string
-  - 説明: 文献のタイトル
-- fetched_at
-  - 型: string
-  - 説明: 取得日時(ISO 8601 形式)
+- Union 型: kind フィールドにより Web 記事または書籍を判別
+- **Web 記事の場合:**
+  - id
+    - 型: integer
+    - 説明: 文献 ID
+  - kind
+    - 型: string
+    - 説明: 文献種別('web')
+  - url
+    - 型: string
+    - 説明: Web 記事の URL
+  - title
+    - 型: string
+    - 説明: Web 記事のタイトル
+- **書籍の場合:**
+  - id
+    - 型: integer
+    - 説明: 文献 ID
+  - kind
+    - 型: string
+    - 説明: 文献種別('book')
+  - isbn
+    - 型: string
+    - 説明: 書籍の ISBN
+  - author
+    - 型: string
+    - 説明: 著者名
+  - publisher
+    - 型: string
+    - 説明: 出版社
+  - publication_year
+    - 型: integer
+    - 説明: 出版年
 
 #### エラーレスポンス
 
@@ -898,62 +992,6 @@ C4 モデルの Component レベルで定義された API 仕様を統合する�
       - 説明: エラーメッセージ
 
 <!-- REFERENCE_END: literature-get-single-api -->
-
-<!-- REFERENCE_BEGIN: literature-get-by-url-api -->
-
-#### エンドポイント
-
-- パス: `/api/literatures/search`
-- メソッド: GET
-
-#### クエリパラメータ
-
-- url
-  - 型: string
-  - 必須/任意: 必須
-  - 説明: 検索する URL(完全一致)
-  - バリデーション: 1-2048 文字
-
-#### レスポンススキーマ(成功時)
-
-- HTTP ステータス: 200 OK
-- literatures
-  - 型: array
-  - 説明: 文献のリスト(完全一致する URL の文献のみ)
-  - 要素:
-    - id
-      - 型: integer
-      - 説明: 文献 ID
-    - url
-      - 型: string
-      - 説明: 文献の URL
-    - title
-      - 型: string
-      - 説明: 文献のタイトル
-    - fetched_at
-      - 型: string
-      - 説明: 取得日時(ISO 8601 形式)
-
-#### エラーレスポンス
-
-- 400 Bad Request
-  - 原因: バリデーションエラー(url パラメータ欠如、文字数超過)
-  - レスポンス:
-    - error
-      - 型: string
-      - 説明: エラーメッセージ
-    - details
-      - 型: array
-      - 要素の型: string
-      - 説明: バリデーションエラーの詳細メッセージリスト
-- 500 Internal Server Error
-  - 原因: サーバー内部エラー
-  - レスポンス:
-    - error
-      - 型: string
-      - 説明: エラーメッセージ
-
-<!-- REFERENCE_END: literature-get-by-url-api -->
 
 ## 検索・発見 API
 

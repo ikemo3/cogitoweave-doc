@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: concept-creation-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: concept-creation-implementation -->
 
 ## データフロー
 
@@ -113,4 +113,4 @@ flowchart TD
 
 既存概念との重複チェック機能が必要
 
-<!-- LOCAL_CONCLUSION_END: concept-creation-implementation -->
+<!-- GLOBAL_CONCLUSION_END: concept-creation-implementation -->

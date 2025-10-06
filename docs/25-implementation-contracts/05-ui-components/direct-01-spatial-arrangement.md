@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: spatial-arrangement-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: spatial-arrangement-implementation -->
 
 ## データフロー
 
@@ -112,4 +112,4 @@ flowchart TD
 
 2D 平面での自由配置とグリッドスナップ機能
 
-<!-- LOCAL_CONCLUSION_END: spatial-arrangement-implementation -->
+<!-- GLOBAL_CONCLUSION_END: spatial-arrangement-implementation -->
