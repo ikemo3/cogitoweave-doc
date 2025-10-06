@@ -13,7 +13,9 @@ depends:
 ## 責務
 
 <!-- PREMISE_BEGIN: summary-editor -->
+
 要約修正エディタ - LLM が作成した要約を個人の理解に合わせて修正
+
 <!-- PREMISE_END: summary-editor -->
 
 ## 責務から仕様への詳細化
@@ -24,7 +26,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: summary-editor-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: summary-editor-implementation -->
 
 ## データフロー
 
@@ -78,7 +80,7 @@ flowchart TD
 
 ### 変更追跡
 
-- ユーザーの編集操作をリアルタイムで追跡し変更箱所をハイライトする
+- ユーザーの編集操作をリアルタイムで追跡し変更箇所をハイライトする
   - 変更内容を視覚的に把握し、修正の精度を向上させるため
 - 変更の種類(追加/修正/削除)を分類して管理する
   - 修正の意図や影響範囲を明確にするため
@@ -106,4 +108,4 @@ flowchart TD
 
 リアルタイム編集と変更ハイライト機能が必要
 
-<!-- LOCAL_CONCLUSION_END: summary-editor-implementation -->
+<!-- GLOBAL_CONCLUSION_END: summary-editor-implementation -->

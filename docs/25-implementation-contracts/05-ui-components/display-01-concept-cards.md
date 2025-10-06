@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: concept-cards-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: concept-cards-implementation -->
 
 ## データフロー
 
@@ -106,4 +106,4 @@ flowchart TD
 
 ホバー時の詳細表示とクリック操作に対応
 
-<!-- LOCAL_CONCLUSION_END: concept-cards-implementation -->
+<!-- GLOBAL_CONCLUSION_END: concept-cards-implementation -->

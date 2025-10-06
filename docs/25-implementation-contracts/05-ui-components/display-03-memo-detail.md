@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: memo-detail-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: memo-detail-implementation -->
 
 ## データフロー
 
@@ -106,4 +106,4 @@ flowchart TD
 
 編集モードとの切り替え機能が必要
 
-<!-- LOCAL_CONCLUSION_END: memo-detail-implementation -->
+<!-- GLOBAL_CONCLUSION_END: memo-detail-implementation -->

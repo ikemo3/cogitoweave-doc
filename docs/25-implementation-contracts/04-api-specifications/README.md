@@ -4,7 +4,6 @@ status: "draft"
 depends:
   contracts:
     - "api-contract"
-    - "distributed-communication-design"
   produces: []
 ---
 
@@ -27,7 +26,7 @@ CogitoWeave の API 契約は以下の 9 つの論理的 API 群で構成され�
 1. **概念 API**: 作成・読み取り・更新 (削除は優先度低)
 2. **文献メモ API**: 作成・読み取り・更新・概念別一覧取得
 3. **関係性 API**: 作成・読み取り・更新 (概念間の重複関係許可)
-4. **文献 API**: 作成・読み取り (URL・タイトル・引用が必須)
+4. **文献 API**: 作成・読み取り
 
 ### 検索・発見 API
 
@@ -43,16 +42,6 @@ CogitoWeave の API 契約は以下の 9 つの論理的 API 群で構成され�
 これらの API により、概念中心の知識体系構築と効率的な知識活用が実現される。
 
 <!-- PREMISE_END: api-contract -->
-
-<!-- PREMISE_BEGIN: distributed-communication-design -->
-
-- **HTTP API 直接通信**: フロントエンドから 3 サービスへの直接 HTTP/HTTPS 通信を行う。
-- **JSON データフォーマット**: GET/POST による CQS ベースの API 設計で保守しやすい通信を実現する。
-- **サービス特性ごとのタイムアウト設定**: 各サービスの処理特性に応じた段階的設定で応答時間管理を行う。
-- **HTTP ステータスコードエラーハンドリング**: 4xx 系でクライアントエラー、5xx 系でサーバーエラーを表現し、サービス特性ごとのリトライ戦略により障害処理を行う。
-- **最小限セキュリティ設計**: HTTPS 通信と CORS 設定による基本セキュリティを確保し、認証認可機能は除外する。
-
-<!-- PREMISE_END: distributed-communication-design -->
 
 ## API 仕様一覧
 

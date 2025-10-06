@@ -1,5 +1,5 @@
 ---
-doc_type: "pattern-logic"
+doc_type: "unknown"
 status: "draft"
 depends:
   contracts:
@@ -16,17 +16,59 @@ depends:
 
 <!-- PREMISE_BEGIN: literature-memo-entity-specification -->
 
-文献メモエンティティ仕様として以下を定義する。
+### エンティティ構造
 
-### 文献メモエンティティのビジネス上の責務
+```mermaid
+classDiagram
+    class LiteratureMemo {
+        +id: ID
+        +concept_id: ForeignKey
+        +literature_id: ForeignKey
+        +title: String(500)
+        +content: Text
+        +created_at: Timestamp
+        +updated_at: Timestamp
+    }
 
-概念に紐づく具体的知識内容を表現し、特定の概念の観点で外部文献を要約・解釈する。LLM 協働により効率的に作成され個人の理解で修正されることで、ツェッテルカステン方式による概念ベースの知識蓄積を実現する。
+    LiteratureMemo "*..*" -- "1" Concept : belongs to
+    LiteratureMemo "*..*" -- "1" Literature : references
+```
 
-### ドメイン層が実装するビジネスロジック
+### 属性制約
 
-- 概念との必須関連: 文献メモは必ず 1 つの概念に紐づく。概念なしの文献メモは存在しない。
-- 文献との必須関連: 文献メモは必ず 1 つの文献に紐づく。文献なしの文献メモは存在しない。
-- 内容の個人化: LLM が生成した要約をそのまま保存するのではなく、個人が理解した形に編集することで真の知識統合が実現される。
+- **title**: 空文字列禁止、最大 500 文字
+- **content**: 空文字列禁止
+- **concept_id**: 必須、外部キー(Concept)
+- **literature_id**: 必須、外部キー(Literature)
+- **id, created_at, updated_at**: 自動設定
+
+### 不変条件
+
+- title は空文字列でない
+- content は空文字列でない
+- concept_id は必ず存在し、有効な概念を参照
+- literature_id は必ず存在し、有効な文献を参照
+- created_at と updated_at は必ず存在
+- updated_at ≧ created_at
+
+### ビジネスルール
+
+#### 概念との必須関連
+
+文献メモは必ず 1 つの概念に紐づく。概念ベースの知識体系構築という中核的価値を保証するため。
+
+#### 文献との必須関連
+
+文献メモは必ず 1 つの文献に紐づく。外部情報を個人の理解に変換するというプロセスの透明性を保証するため。
+
+#### 内容の個人化
+
+LLM が生成した要約をそのまま保存するのではなく、個人が理解した形に編集することで、真の知識統合が実現される。
+
+### 関係性制約
+
+- **概念との関係**: 多対 1、概念削除時は ON DELETE RESTRICT でアプリケーション層が制御
+- **文献との関係**: 多対 1、文献削除時は ON DELETE RESTRICT でアプリケーション層が制御
 
 <!-- PREMISE_END: literature-memo-entity-specification -->
 
@@ -40,8 +82,8 @@ CREATE TABLE literature_memo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     concept_id INTEGER NOT NULL,
     literature_id INTEGER NOT NULL,
-    title VARCHAR(500) NOT NULL,
-    content TEXT NOT NULL,
+    title VARCHAR(500) NOT NULL CHECK(title != ''),
+    content TEXT NOT NULL CHECK(content != ''),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (concept_id) REFERENCES concept(id) ON DELETE RESTRICT,
@@ -54,41 +96,29 @@ CREATE INDEX idx_literature_memo_literature_id ON literature_memo(literature_id)
 
 <!-- PREMISE_END: literature-memo-table-schema -->
 
-<!-- PREMISE_BEGIN: backend-layer-structure -->
+<!-- PREMISE_BEGIN: layered-architecture-structure -->
 
 バックエンドは 4 層構成のレイヤードアーキテクチャを採用する。
 
-#### レイヤー構成
+### 設計原則
+
+- 薄いドメイン層アプローチ: DOA とデータベース制約により、意図的に Domain 層を薄く保つ
+- Active Record パターンを避ける: ビジネスロジックと DB 技術を分離
+- 基本 1:1 対応: Domain エンティティと ORM エンティティは構造を揃え、変換コストを最小化
+- Repository で吸収しない: ドメインロジックは Domain 層に配置し、Repository は変換のみ担当
+
+### レイヤー構成
 
 - **API 層**: FastAPI エンドポイント、リクエスト/レスポンスの Pydantic モデル
-- **Application 層**: ユースケース実行、トランザクション制御
+- **Application 層**: ユースケース実行、複数機能にまたがる処理の調整、トランザクション制御
 - **Domain 層**: エンティティ(純粋な Python)、エンティティ内で閉じるビジネスロジック
 - **Repository 層**: SQLAlchemy ORM、データアクセス、外部 API 通信、Domain ⇔ ORM 変換
 
-#### 各層の責務
+<!-- PREMISE_END: layered-architecture-structure -->
 
-**API 層**:
+<!-- PREMISE_BEGIN: repository-layer-responsibility -->
 
-- FastAPI ルーター定義
-- HTTP リクエスト/レスポンス処理
-- Pydantic モデルによる入力バリデーション
-- HTTP ステータスコードエラーハンドリング
-
-**Application 層**:
-
-- ユースケース実装
-- トランザクション制御
-- 複数機能にまたがる処理の調整
-- Repository 層を使った外部システム協調
-
-**Domain 層**:
-
-- ビジネスエンティティ定義(純粋な Python)
-- エンティティ内で閉じるビジネスロジック
-- データ構造から自然に導出されるロジック
-- ドメインサービスはほぼ不要(DB 制約で整合性管理)
-
-**Repository 層**:
+### Repository 層の責務
 
 - SQLAlchemy ORM 定義(テーブル構造)
 - データベースアクセス
@@ -96,14 +126,7 @@ CREATE INDEX idx_literature_memo_literature_id ON literature_memo(literature_id)
 - Domain エンティティ ⇔ ORM エンティティ変換
 - クエリ実行、トランザクション境界
 
-#### 設計原則
-
-- 薄いドメイン層アプローチ: DOA とデータベース制約により、意図的に Domain 層を薄く保つ
-- Active Record パターンを避ける: ビジネスロジックと DB 技術を分離
-- 基本 1:1 対応: Domain エンティティと ORM エンティティは構造を揃え、変換コストを最小化
-- Repository で吸収しない: ドメインロジックは Domain 層に配置し、Repository は変換のみ担当
-
-<!-- PREMISE_END: backend-layer-structure -->
+<!-- PREMISE_END: repository-layer-responsibility -->
 
 ## 論理
 
@@ -146,10 +169,15 @@ Domain エンティティ ⇔ ORM エンティティの変換は 1:1 対応で�
 
 ### 文献メモ Repository のインターフェース
 
-- `create(literature_memo: LiteratureMemo) -> LiteratureMemo`: 文献メモを作成する
-- `get_by_id(literature_memo_id: int) -> LiteratureMemo | None`: ID で文献メモを取得する
-- `get_by_concept_id(concept_id: int) -> list[LiteratureMemo]`: 概念 ID で文献メモ一覧を取得する
-- `update(literature_memo: LiteratureMemo) -> LiteratureMemo`: 文献メモを更新する
+```mermaid
+classDiagram
+    class LiteratureMemoRepository {
+        +create(literature_memo: LiteratureMemo) LiteratureMemo
+        +get_by_id(literature_memo_id: integer) LiteratureMemo|None
+        +get_by_concept_id(concept_id: integer) List~LiteratureMemo~
+        +update(literature_memo: LiteratureMemo) LiteratureMemo
+    }
+```
 
 ### 文献メモ Repository の実装方針
 

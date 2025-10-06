@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: relationship-definition-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: relationship-definition-implementation -->
 
 ## データフロー
 
@@ -111,4 +111,4 @@ flowchart TD
 
 個人の語彙辞書との連携が必要
 
-<!-- LOCAL_CONCLUSION_END: relationship-definition-implementation -->
+<!-- GLOBAL_CONCLUSION_END: relationship-definition-implementation -->

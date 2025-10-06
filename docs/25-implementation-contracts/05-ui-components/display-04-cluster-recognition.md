@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: cluster-recognition-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: cluster-recognition-implementation -->
 
 ## データフロー
 
@@ -106,4 +106,4 @@ flowchart TD
 
 動的クラスタ更新とユーザー調整機能が必要
 
-<!-- LOCAL_CONCLUSION_END: cluster-recognition-implementation -->
+<!-- GLOBAL_CONCLUSION_END: cluster-recognition-implementation -->

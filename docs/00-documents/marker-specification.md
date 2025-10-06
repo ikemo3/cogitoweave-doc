@@ -18,7 +18,7 @@ depends:
 
 - **結論の継承**: 個別・統合・段階型すべてのタイプで結論を結論集に継承
 - **新規定義**: このファイルで新たに定義・生産する契約内容
-- **基底統合**: Why 系 →11-why-conclusion.md、What 系 →21-01〜05-*-view.md(各ビュー別)
+- **基底統合**: Why 系 →11-why-conclusion.md、What 系 →21-01〜05-\*-view.md(各ビュー別)
 
 ### GLOBAL_CONCLUSION マーカー記法
 
@@ -104,7 +104,7 @@ depends:
 
 ```markdown
 <!-- PREMISE_INLINE: example -->
-<!-- GLOBAL_CONCLUSION_INLINE: example -->  
+<!-- GLOBAL_CONCLUSION_INLINE: example -->
 <!-- LOCAL_CONCLUSION_INLINE: example -->
 <!-- REFERENCE_INLINE: example -->
 ```
@@ -112,13 +112,79 @@ depends:
 ### INLINE マーカー使用例
 
 ```markdown
-- URL入力フィールド - 外部記事のURL入力 <!-- REFERENCE_INLINE: example -->
+- URL 入力フィールド - 外部記事の URL 入力 <!-- REFERENCE_INLINE: example -->
 - 概念作成インターフェース - 新規概念作成機能 <!-- REFERENCE_INLINE: example -->
+```
+
+## マーカー命名規則
+
+マーカー名は由来を明確にするため、以下の命名規則に従う。
+
+### 基本構造
+
+```text
+{軸}/{ビュー}:{内容ID}
+```
+
+**例外(docs 軸のみ)**:
+
+```text
+{軸}:{内容ID}
+```
+
+### 軸とビューの定義
+
+**why 系(Why 系: なぜ作るのか)**:
+
+```text
+why/core:{内容ID}     - 01-core-vision(コアビジョン)
+why/org:{内容ID}      - 02-organizational-capacity(組織能力)
+why/ext:{内容ID}      - 03-external-environment(外部環境)
+why/sys:{内容ID}      - 04-system-properties(システム制約)
+```
+
+**what 系(What 系: 何を作るのか - Kruchten 4+1 ビュー)**:
+
+```text
+what/scenario:{内容ID}         - 01-user-desires(Scenario View)
+what/logical:{内容ID}          - 02-system-blueprint/01-logical-view(Logical View)
+what/process:{内容ID}          - 02-system-blueprint/02-process-view(Process View)
+what/development:{内容ID}      - 02-system-blueprint/03-development-view(Development View)
+what/physical:{内容ID}         - 02-system-blueprint/04-physical-view(Physical View)
+what/sys-constraints:{内容ID}  - 03-system-constraints(システム制約)
+what/user-constraints:{内容ID} - 04-user-constraints(ユーザー制約)
+```
+
+**docs 系(メタ情報)**:
+
+```text
+docs:{内容ID}         - 00-documents(設計書体系のメタ情報)
+```
+
+**contract 系(TBD)**:
+
+```text
+contract/{ビュー}:{内容ID}    - 25-implementation-contracts(実装契約)
+```
+
+**how 系(TBD)**:
+
+```text
+how/{ビュー}:{内容ID}         - 30-delivery-methods(実装・運用方法)
+```
+
+### 命名例
+
+```text
+why/core:mission-statement
+what/development:sqlite-selection
+what/scenario:usage-context
+docs:writing-rules
 ```
 
 ## 共通ルール
 
-- マーカー名は任意の名前を指定可能
+- マーカー名は上記の命名規則に従う
 - マーカーで囲んだ本文は、見出しレベル(行頭の `#`)を除き**完全一致**が必要
 - 一致の判定は空白や記号も含む
 - 同一マーカー名を持つ内容は、すべてのファイルで**一字一句同じ**でなければならない

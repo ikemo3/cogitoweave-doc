@@ -24,7 +24,7 @@ depends:
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: memo-list-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: memo-list-implementation -->
 
 ## データフロー
 
@@ -105,4 +105,4 @@ flowchart TD
 
 TBD
 
-<!-- LOCAL_CONCLUSION_END: memo-list-implementation -->
+<!-- GLOBAL_CONCLUSION_END: memo-list-implementation -->

@@ -8,12 +8,14 @@ depends:
     - "url-input-field-implementation"
 ---
 
-# URL入力フィールド
+# URL 入力フィールド
 
 ## 責務
 
 <!-- PREMISE_BEGIN: url-input-field -->
+
 URL 入力フィールド - 外部記事の URL 入力
+
 <!-- PREMISE_END: url-input-field -->
 
 ## 責務から仕様への詳細化
@@ -24,7 +26,7 @@ URL 入力フィールド - 外部記事の URL 入力
 **入力**: 「何をするか」の責務定義
 **出力**: 「どうやるか」のデータフローと処理詳細
 
-<!-- LOCAL_CONCLUSION_BEGIN: url-input-field-implementation -->
+<!-- GLOBAL_CONCLUSION_BEGIN: url-input-field-implementation -->
 
 ## データフロー
 
@@ -33,17 +35,17 @@ flowchart TD
     subgraph "入力"
         A[URL文字列ユーザー入力]
     end
-    
+
     subgraph "処理"
         B[URL形式検証]
         C[入力状態管理]
     end
-    
+
     subgraph "出力"
         D[検証済みURL値]
         E[入力状態情報]
     end
-    
+
     A --> B
     A --> C
     B --> D
@@ -52,19 +54,19 @@ flowchart TD
 
 ## 入力
 
-### URL文字列
+### URL 文字列
 
-- ユーザーが入力するURL文字列を受け取る
+- ユーザーが入力する URL 文字列を受け取る
   - 外部記事を取得するための基本情報として必要なため
 
 ## 処理
 
-### URL形式検証
+### URL 形式検証
 
-- 入力されたURL文字列の形式妥当性を検証する
-  - 無効なURLによる後続処理のエラーを防ぐため
+- 入力された URL 文字列の形式妥当性を検証する
+  - 無効な URL による後続処理のエラーを防ぐため
 - http/https スキームの確認を実行する
-  - セキュリティ制約に適合するURLのみを受け入れるため
+  - セキュリティ制約に適合する URL のみを受け入れるため
 
 ### 入力状態管理
 
@@ -75,18 +77,18 @@ flowchart TD
 
 ## 出力
 
-### 検証済みURL値
+### 検証済み URL 値
 
-- 形式検証を通過したURL文字列を出力する
+- 形式検証を通過した URL 文字列を出力する
   - 後続の記事取得処理で安全に使用できるようにするため
 
 ### 入力状態情報
 
 - 現在の入力状態と検証結果を出力する
-  - UIでの状態表示とユーザーガイダンスを可能にするため
+  - UI での状態表示とユーザーガイダンスを可能にするため
 
 ## 備考
 
-URL形式のバリデーション機能が必要
+URL 形式のバリデーション機能が必要
 
-<!-- LOCAL_CONCLUSION_END: url-input-field-implementation -->
+<!-- GLOBAL_CONCLUSION_END: url-input-field-implementation -->

@@ -29,7 +29,7 @@ CogitoWeave の API 契約は以下の 9 つの論理的 API 群で構成され�
 1. **概念 API**: 作成・読み取り・更新 (削除は優先度低)
 2. **文献メモ API**: 作成・読み取り・更新・概念別一覧取得
 3. **関係性 API**: 作成・読み取り・更新 (概念間の重複関係許可)
-4. **文献 API**: 作成・読み取り (URL・タイトル・引用が必須)
+4. **文献 API**: 作成・読み取り
 
 ### 検索・発見 API
 
@@ -65,7 +65,7 @@ CogitoWeave の API 契約は以下の 9 つの論理的 API 群で構成され�
 -- ============================================
 CREATE TABLE concept (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL UNIQUE CHECK(name != ''),
     description VARCHAR(1000) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
